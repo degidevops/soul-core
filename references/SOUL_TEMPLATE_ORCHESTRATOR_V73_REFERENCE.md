@@ -26,8 +26,12 @@ here should ever be loaded into a live agent's prompt context.
 |---|---|
 | Template Engine | v7 (Orchestrator-Extended) |
 | Format | semantic-xml |
-| Backbone | v7.3-orchestrator-literature-backed |
+| Backbone | v7.4-orchestrator-literature-backed |
 | Version | v7.3 (Orchestrator Specific) |
+
+### V7.4 (June 2026 Sync)
+- **Context Hygiene:** Distillation triggers aligned with worker template (proactive trigger at >20% context usage, mandatory reset/re-injection at >30% context usage).
+- **Governance:** Section C `hard_guardrails` transitioned to XML-tag structure (`<hard_guardrails>`, `<guardrail>`) for semantic parsing.
 
 ### V7.3-ORCH Changelog (June 2026)
 
@@ -117,10 +121,11 @@ Orchestration and execution require different toolsets and cognitive modes.
 
 ---
 
-### 4.6 Step 10 — Structured Provenance & A2A Tracing
+### 4.6 Step 8 — Structured Provenance & A2A Tracing (V7.4 Sync)
 
 *   **A2A Tracing (Adimulam et al., arXiv:2601.13671)**: Enterprise-scale observability requires all agent-to-agent interactions to emit structured trace events (JSONL format). This is mapped to Kanban task history (task creation, linking, commenting, and block state transitions), enabling complete deterministic replays of multi-agent execution paths.
 *   **Process-level Accountability (arXiv:2606.04990)**: Structured execution provenance replaces self-reported LLM confidence with verifiable, audit-ready claims traced directly to SQLite database changes and raw file system outputs.
+*   **Context Hygiene (V7.4)**: Triggered at >20% and >30% context usage to proactively manage attention decay, enforcing anchor re-injection for stability.
 
 ---
 

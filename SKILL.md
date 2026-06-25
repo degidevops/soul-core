@@ -1,7 +1,7 @@
 ---
 name: soul-management
-description: "Manage worker (V7) and orchestrator (V73) SOUL.md templates."
-version: 7.3.0
+description: "Manage worker (V7.4) and orchestrator (V7.4) SOUL.md templates with dynamic context hygiene."
+version: 7.4.0
 author: Maru (soul-gen project)
 license: MIT
 platforms: [linux, macos, windows]
@@ -18,7 +18,7 @@ This is the umbrella skill for SOUL (Systemic Operational Underlying Logic) prof
 
 ## When to Use
 - Managing, authoring, or auditing SOUL.md profile templates for Hermes Agent.
-- Creating, deploying, or verifying a Worker (V7) or Orchestrator (V7.3) profile.
+- Creating, deploying, or verifying a Worker (V7) or Orchestrator (V7.4) profile.
 - Updating system context (Section C) or implementing Intent-Driven protocols.
 - Restructuring and optimizing agent instructions for 15-25% token reduction.
 
@@ -43,10 +43,10 @@ Always choose the template based on the agent's function:
 
 | Template | Canonical Path | Status |
 |----------|---------------|--------|
-| `SOUL_TEMPLATE_V7.md` | `templates/` | Live (v7.2 body / v7.3 clean) |
-| `SOUL_TEMPLATE_ORCHESTRATOR_V73.md` | `templates/` | **CURRENT** (v7.3) |
-| `SOUL_TEMPLATE_V7_REFERENCE.md` | `references/` | Reference & Citations (v7.3) |
-| `SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` | `references/` | Reference & Citations (v7.3) |
+| `SOUL_TEMPLATE_V7.md` | `templates/` | **CURRENT** (v7.4) |
+| `SOUL_TEMPLATE_ORCHESTRATOR_V73.md` | `templates/` | **CURRENT** (v7.4) |
+| `SOUL_TEMPLATE_V7_REFERENCE.md` | `references/` | Reference & Citations (v7.4) |
+| `SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` | `references/` | Reference & Citations (v7.4) |
 
 *Note: Reference files reside strictly in the `references/` directory to prevent them from entering agent contexts.*
 
@@ -133,7 +133,7 @@ Section C is a **dynamic Governance Contract**, not static config. Design princi
 7. **Resource specificity:** Enumerate exact tools, workspace type, skill references, model requirements.
 8. **Reporting completeness:** Include role-specific reporting requirements.
 
-#### Orchestrator-Specific Section C (V73)
+#### Orchestrator-Specific Section C (V74)
 For orchestrator profiles, Section C must additionally include:
 1. **Kanban lifecycle awareness:** triage → todo → ready → claimed → blocked/completed/archived.
 2. **Triage column handling:** Review auto-decomposed graphs, validate quality, promote/adjust.
@@ -144,13 +144,13 @@ For orchestrator profiles, Section C must additionally include:
 7. **Worker liveness reporting:** Periodic heartbeat summary, flag stale claims.
 8. **Context compression handling:** Re-read kanban_list after compression events.
 
-#### Template Creation Workflow (V7.3+ Pattern)
+#### Template Creation Workflow (V7.4+ Pattern)
 1. Read ALL existing references in `references/`.
 2. Build the full template via `write_file` (not iterative patches for major version bumps).
 3. Update companion reference file in `references/`.
 4. Validate: XML tag balance, placeholder integrity, section structure, step/anchor/mode counts.
 
-#### Triangulation Principle (Critical — V7.3 Lesson)
+#### Triangulation Principle (Critical — V7.4 Lesson)
 - **Forum discussions** = practitioner knowledge, real-world problems.
 - **Literature (arXiv)** = academic validation, latest research, formal proofs.
 - **Official docs** = baseline truth, API contracts, configuration reference.
@@ -172,7 +172,7 @@ For orchestrator profiles, Section C must additionally include:
 
 ## Verification
 
-### Post-Deployment Validation Protocol (V7.3+)
+### Post-Deployment Validation Protocol (V7.4+)
 Immediately after deploying a `SOUL.md` profile, the agent MUST run the following validation checks. Do NOT report success to the user if any check fails:
 
 1. **XML Tag Balance:** Confirm equal count of opening and closing section tags (e.g. run `grep -c '<section_' <path>` and `grep -c '</section_' <path>`).
@@ -183,6 +183,6 @@ Immediately after deploying a `SOUL.md` profile, the agent MUST run the followin
 
 ## References
 - `references/SOUL_TEMPLATE_V7_REFERENCE.md` — Complete rationale, citation index, and design decisions for Worker (V7) profiles.
-- `references/SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` — Complete rationale, citation index, and control plane decisions for Orchestrator (V7.3) profiles.
-- `queue-wiki/maru/V73_VALIDATION_REPORT.md` — V73 validation findings.
-- `queue-wiki/maru/V73_TRIANGULATION_RESEARCH.md` — V73 triangulation research.
+- `references/SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` — Complete rationale, citation index, and control plane decisions for Orchestrator (V7.4) profiles.
+- `queue-wiki/maru/V74_VALIDATION_REPORT.md` — V74 validation findings.
+- `queue-wiki/maru/V74_TRIANGULATION_RESEARCH.md` — V74 triangulation research.

@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0/0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v7.4.0] — 2026-06-25
+
+### Added
+- **Dynamic Context Hygiene:** Implemented fine-grained distillation and anchor re-injection triggers based on >20% and >30% context usage percentage, improving upon coarse message-based triggers.
+- **Semantic Governance:** Refactored Section C constraints in both V7 (Worker) and V73 (Orchestrator) templates into XML-style tags (`<hard_guardrails>`, `<guardrail>`) for structured semantic enforcement.
+
+### Changed
+- **Language Standardization:** Fully converted all template text to English for improved portability.
+
 ## [v7.3.0-ORCH] — 2026-06-25
 
 ### Added

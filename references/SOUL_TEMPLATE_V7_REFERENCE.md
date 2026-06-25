@@ -37,8 +37,13 @@ operational.
 | Format | semantic-xml |
 | Backbone | v7-research-backed |
 | Body Version | v7.1 |
-| Context Hygiene | v7.2 |
+| Context Hygiene | v7.4 |
 | Tool-Call Reliability | v7.3 |
+
+### V7.4 (Added - June 2026)
+
+- **Dynamic Context Hygiene:** Moved context distillation/anchor injection triggers from message-count (coarse) to %-of-context-limit usage (fine-grained, >20% and >30%).
+- **Section C Governance:** Structured Section C `hard_guardrails` into XML-style tags for explicit semantic enforcement.
 
 ### V7.3 (Added)
 
@@ -85,7 +90,7 @@ Guidance for whoever fills in `{{PLACEHOLDERS}}` in the template:
 | `{{AUTHORITY_LEVEL}}` | Decision-making boundary. Example: "Execute confirmed tasks, clarify ambiguous intent, proactively identify and mitigate risks." |
 | `{{PROCEED_SIGNAL}}` | A single word the user can say to bypass verification on low-risk items. Must be unique enough not to appear accidentally. Example: "Lanjut" |
 | `{{SYSTEM_POSITION}}` | The agent's position in the system hierarchy. Example: "Sub-agent of orchestrator X. Receives delegated tasks from Hermes." |
-| `{{KEY_CONSTRAINTS}}` | Technical or operational constraints. Example: "SOUL V7.3 protocol. Deterministic verification only. Context distillation at 15msg/10calls. Anchor re-injection at 20msg. Binary provenance." |
+| `{{KEY_CONSTRAINTS}}` | Technical or operational constraints. Example: "SOUL V7.4 protocol. Deterministic verification only. Context distillation at >20% usage. Anchor re-injection at >20% usage. Binary provenance." |
 | `{{ESCALATION_PROTOCOL}}` | When and to whom the agent must escalate. Example: "Ambiguous intent: clarify with A/B/C options. Unresolvable blockers: report with root cause + alternatives. Security/ethical violations: immediate halt + user notification." |
 | `{{AVAILABLE_RESOURCES}}` | Tools, APIs, or external systems available. Example: "Full tool suite. Persistent memory. External web access. Subagent spawning." |
 | `{{REPORTING_FORMAT}}` | Expected output format. Example: "Conversational Pure Markdown. All factual claims grounded with citations." |
@@ -171,6 +176,8 @@ LLM metacognition degrades as context fills — and models cannot detect this de
 #### Context Distillation
 Enforces separate parsing of noise and signal. Distillation preserves verified facts verbatim while discarding failed attempts, redundant explanations, and conversational filler. This is different from summarization, which collapses or rewrites facts.
 
+**Dynamic Trigger (V7.4 update):** Triggers now operate on `% context usage` (>20% and >30%) rather than message counts. This is far more effective as it accounts for varying token sizes per turn (e.g., long logs vs. short chat), ensuring the agent resets *exactly* when context saturation threatens performance.
+
 #### Anchor Re-Injection
 Re-inserts critical constraints into the high-attention zone at the end of the context window. Attention decay is structural, not behavioral — re-injection is the only reliable mitigation.
 
@@ -179,7 +186,18 @@ If faults propagate across multi-step execution, the system must perform a struc
 
 ---
 
-### 4.5 Step 7 — Approval Gate
+### 4.5 Section C — XML-Structured Governance (V7.4 update)
+
+Section C now enforces hard governance via `<hard_guardrails>` tags.
+
+**Why XML for Governance?**
+1. **Structural Weight**: Using tags like `<hard_guardrail>` forces the model's attention mechanism to treat these constraints as a separate, structured block of logic rather than merely part of a narrative list.
+2. **Semantic Clarity**: It clarifies the distinction between constraints (the *what* and *how*) and the hard guardrails (the absolute *must-nots*).
+3. **Parseability**: Enables programmatic validation of the governance structure before the template is even instantiated.
+
+---
+
+### 4.6 Step 7 — Approval Gate
 
 High-stakes actions require human confirmation. Common failure modes in
 deployed systems include approval-gate bypass, hanging on timeout, and silent
@@ -188,7 +206,7 @@ confirmation, timeout with safe abort (never auto-proceed), and audit log entry.
 
 ---
 
-### 4.6 Step 8 — Execution Provenance
+### 4.7 Step 8 — Execution Provenance
 
 #### Replaced Self-Reported Confidence
 Self-reported confidence is a simulated probability, not a measurement of ground truth. LLMs do not possess self-awareness of what they do or do not know. The active template replaces "confidence scoring" with **Binary Provenance Verification**: can this claim be traced to a specific tool output or source passage in the current context?
@@ -202,7 +220,7 @@ Structured trace events (JSONL) enable replay, diagnosis, and auditing. This is 
 
 ---
 
-### 4.7 Step 3 — Tool Use Protocol (V7.3 additions)
+### 4.8 Step 3 — Tool Use Protocol (V7.3 additions)
 
 #### Pre-decision Consolidation
 Before every tool call, collapse all relevant state into a single compact brief. This mirrors the condition that achieves ~95% of single-turn performance — scattered multi-turn context is the root cause of degradation.

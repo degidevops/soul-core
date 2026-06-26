@@ -107,6 +107,33 @@ Run `grep -r <old_name> .` to find all occurrences after any rename.
 ### 6. Description Length Violation
 Aim ≤60 chars (spec example). If description exceeds 60 chars, trim aggressively. The Procedure section carries detail — description should only trigger recognition.
 
+### 7. Memory Overflow When Recording Migration
+After a successful migration, you MUST update memory with the new architecture state. Memory has a hard char limit (~2,200). Before writing, check current usage. If usage >80%, consolidate stale entries first (remove or merge overlapping ones) before adding the migration record. A single migration record (~350 chars) can push past the limit and fail silently. Pattern: remove the old monolithic-architecture memory entry, replace with a compact hybrid-migration entry, then confirm write success.
+
+### 8. Section B Extraction Pattern
+When extracting Section B (reasoning protocol) from a monolithic SOUL.md into flat skills:
+1. Keep in SOUL.md: Section A (identity, scope, failure modes, tools, input triggers) + Section B header (knowledge priority only) + Section C (system context)
+2. Replace Section B body (Steps 0-8 inline protocol) with `## Mandatory Skill Triggers` table
+3. **Worker template**: 10 skills only (exclude `task-decomposition` and `control-plane-management`)
+4. **Orchestrator template**: 12 skills (include `task-decomposition` and `control-plane-management`)
+5. Workers MUST NOT act as orchestrator — no self-directed decomposition, no kanban interaction
+6. Section B retains ONLY the knowledge priority list (4 lines) — nothing else
+7. Verify: `#### Step 0` should NOT appear in SOUL.md post-migration
+
+### 9. Over-Extract Pitfall Notes — Template Authority > Agent Inference
+**Pattern**: When extracting pitfall notes from a live session, agents tend to over-generalize edge cases into universal rules ("workers may need orchestrator skills for self-directed tasks"). This happens because the agent reasons from a single observation rather than the architectural principle.
+
+**Rule**: The template definition (SOUL_TEMPLATE_V7.md, SOUL_TEMPLATE_ORCHESTRATOR_V73.md) is the **source of truth** for profile-skill boundaries. Pitfall notes and migration recipes MUST NOT add skills to a profile that the template excludes. If an edge case seems to warrant a new skill for a worker, escalate to the user rather than silently adding it to the trigger table.
+
+**Test**: After writing a pitfall note or migration step, ask: "Does this contradict the template?" If yes, the template wins — fix the note, not the template.
+
+**Real example (2026-06-26)**: Pitfall #8 initially said "Move orchestrator-only skills into trigger table — workers may need them for self-directed decomposition." This was wrong: workers are assigned tasks, they do not decompose or assign. The template V7.5 correctly excludes these. Pitfall #8 was reverted to enforce the boundary.
+
+### 10. Strict Literal Compliance With Skill Rules
+The user enforces deterministic execution: if a skill says X, do X exactly. When the user demanded "perbaiki SKILL.md," the correct response was to identify the inconsistency between two sections within the skill (Pitfall #8 vs. Skill Inventory table), reconcile them toward the authoritative source (template), and apply the fix — not to improvise a third interpretation.
+
+**Rule**: When internal documentation contradicts itself, resolve toward the **most authoritative layer** (template > inventory table > pitfall notes > migration recipes > agent inference). Never side with the agent's own reasoning over the documented spec.
+
 ## References
 - `templates/SOUL_TEMPLATE_V7.md` — Worker template
 - `templates/SOUL_TEMPLATE_ORCHESTRATOR_V73.md` — Orchestrator template
@@ -117,3 +144,4 @@ Aim ≤60 chars (spec example). If description exceeds 60 chars, trim aggressive
 - `references/CHANGELOG.md` — Version history
 - `references/hybrid-architecture-migration.md` — V7.4→V7.5 migration metrics
 - `references/hybrid-architecture-enforcement.md` — Enforcement guide for the hybrid pattern
+- `references/in-place-migration-recipe.md` — Monolithic→Hybrid migration recipe (exact steps, validation checklist, memory overflow guard)

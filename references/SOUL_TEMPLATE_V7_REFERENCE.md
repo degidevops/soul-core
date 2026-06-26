@@ -37,6 +37,15 @@ operational.
 | Context Hygiene | v7.4 |
 | Tool-Call Reliability | v7.3 |
 
+### V7.5 (Added — June 2026)
+
+- **Hybrid Architecture:** Extracted all procedural protocols from inline template content into 12 standalone skills under `skills/` directory. Each skill follows proper Hermes SKILL.md format (frontmatter + When to Use → Procedure → Pitfalls → Verification).
+- **Flat Skill Structure:** Removed `worker/`, `shared/`, `orchestrator/` subdirectories — all 12 skills now live flat under `skills/`. Trigger condition in SOUL.md determines when each skill is used, not folder ownership.
+- **Mandatory Skill Triggers:** Worker (V7.5) and Orchestrator (V7.5) templates now include `## Mandatory Skill Triggers` section with explicit `skill_view(name="...")` calls.
+- **Template Compression:** Worker: 368→127 lines (-65%), Orchestrator: 615→241 lines (-61%). All protocol detail moved to skills.
+- **Git Remote:** Changed from `degidevops/soul-management` to `degidevops/soul-core`.
+- **Skill Name:** `soul-management` → `soul-core` (in SKILL.md frontmatter).
+
 ### V7.4 (Added - June 2026)
 
 - **Dynamic Context Hygiene:** Moved context distillation/anchor injection triggers from message-count (coarse) to %-of-context-limit usage (fine-grained, >20% and >30%).
@@ -139,7 +148,7 @@ update itself. External sources are the only ground truth.
 
 ---
 
-### 4.3 Step 1 — Factually-Triggered Search
+### 4.3 Search Protocol (skill: `search-protocol`)
 
 #### Objective vs Subjective Triggers
 Search is triggered purely by the *type of claim* (factual), not by the model's self-assessment of confidence. LLMs cannot reliably detect when their own knowledge is stale, so we enforce an objective trigger (IS THIS A FACTUAL CLAIM?) instead of letting the model guess if it is sure.
@@ -164,7 +173,9 @@ Maps to OWASP LLM01:2025 (Prompt Injection). Retrieved content is untrusted data
 
 ---
 
-### 4.4 Step 6 — Context Hygiene
+### 4.4 Intent Validation (skill: `intent-validation`)
+
+Intent validation moved to skill `intent-validation`, loaded `skill_view(name="intent-validation")` before executing any task with unclear scope**.
 
 #### Attention Decay & "Lost in the Middle"
 LLM metacognition degrades as context fills — and models cannot detect this degradation. Instructions placed in the middle of long contexts are increasingly ignored (the "Lost in the Middle" effect). Simple summarization is insufficient because summaries also lose detail.
@@ -182,7 +193,7 @@ If faults propagate across multi-step execution, the system must perform a struc
 
 ---
 
-### 4.5 Section C — Markdown-Structured Governance (V7.4 update)
+### 4.5 Context Hygiene (skill: `context-hygiene`)
 
 Section C now enforces hard governance via standard Markdown headings and lists.
 
@@ -194,7 +205,7 @@ Section C now enforces hard governance via standard Markdown headings and lists.
 
 ---
 
-### 4.6 Step 7 — Approval Gate
+### 4.6 Tool Use Discipline (skill: `tool-use-discipline`)
 
 High-stakes actions require human confirmation. Common failure modes in
 deployed systems include approval-gate bypass, hanging on timeout, and silent
@@ -203,7 +214,7 @@ confirmation, timeout with safe abort (never auto-proceed), and audit log entry.
 
 ---
 
-### 4.7 Step 8 — Execution Provenance
+### 4.7 Human-in-the-Loop Gate (skill: `human-in-the-loop`)
 
 #### Replaced Self-Reported Confidence
 Self-reported confidence is a simulated probability, not a measurement of ground truth. LLMs do not possess self-awareness of what they do or do not know. The active template replaces "confidence scoring" with **Binary Provenance Verification**: can this claim be traced to a specific tool output or source passage in the current context?
@@ -217,7 +228,7 @@ Structured trace events (JSONL) enable replay, diagnosis, and auditing. This is 
 
 ---
 
-### 4.8 Step 3 — Tool Use Protocol (V7.3 additions)
+### 4.8 Execution Provenance (skill: `execution-provenance`)
 
 #### Pre-decision Consolidation
 Before every tool call, collapse all relevant state into a single compact brief. This mirrors the condition that achieves ~95% of single-turn performance — scattered multi-turn context is the root cause of degradation.
@@ -234,24 +245,24 @@ Once a model makes a wrong assumption in a trajectory, it does not self-correct 
 
 | Source | Used In |
 |---|---|
-| arXiv 2603.06847 — Compound failure taxonomy, dependency/integration failures | Failure modes, Contract Validation, Semantic Grounding, Approval Gate, Provenance |
-| arXiv 2505.15962 — Parametric knowledge staleness | Knowledge Priority, Step 1 core principle |
-| arXiv 2604.09515 — Deprecated API usage from stale knowledge | Failure Mode 1, Step 1 core principle |
-| MDPI 2025 — Probabilistic predictions, not verified facts | Failure Mode 2, Step 1 core principle |
-| arXiv 2510.05381 — More retrieval degrades performance | Step 1 quantity limit |
-| ACL 2025 — Knowledge overshadowing | Step 1 not-exempt |
-| TMLS NYC 2026 — Semantic failure = format correct, fact wrong | Step 1 Semantic Grounding |
-| arXiv 2601.16478 — DeepEra (evidence reranking) | Step 1 Evidence Ranking |
-| arXiv 2605.19196 — REFLECT benchmark (LLM-as-Judge unreliable) | Step 1 Evidence Ranking |
-| arXiv 2605.01664 — Hybrid retrieval + reranking + grounding | Step 1 Evidence Ranking |
-| arXiv 2606.04990 — Evidence tracing and provenance | Step 1 Evidence Ranking, Step 8 |
-| arXiv 2508.08742 — SSLI formal definition | Step 1 Evidence Ranking |
-| OWASP LLM01:2025 — Prompt Injection | Step 1 Instruction Contamination Guard |
-| arXiv 2505.06120 — Multi-turn reliability collapse (Laban et al.) | Step 6, Step 3 (consolidation, recap, failure policy) |
-| arXiv 2503.13657 — MAST failure taxonomy (UC Berkeley) | Failure Mode 6, Failure Mode 8 |
-| BFCL-V4 / llm-stats.com 2026 — Frontier function-calling plateaus | Failure Mode 8 |
-| arXiv 2505.03275 — RAG-MCP / Tool-RAG | Skill Exposure Protocol (historical reference) |
-| arXiv 2602.17046 — ITR (Instruction-Tool Retrieval) | Skill Exposure Protocol (historical reference) |
+| arXiv 2603.06847 — Compound failure taxonomy, dependency/integration failures | Failure modes, Contract Validation, Semantic Grounding, HITL Gate, Provenance |
+|| arXiv 2505.15962 — Parametric knowledge staleness | Knowledge Priority, search-protocol core principle |
+|| arXiv 2604.09515 — Deprecated API usage from stale knowledge | Failure Mode 1, search-protocol core principle |
+|| MDPI 2025 — Probabilistic predictions, not verified facts | Failure Mode 2, search-protocol core principle |
+|| arXiv 2510.05381 — More retrieval degrades performance | search-protocol quantity limit |
+|| ACL 2025 — Knowledge overshadowing | search-protocol not-exempt |
+|| TMLS NYC 2026 — Semantic failure = format correct, fact wrong | search-protocol Semantic Grounding |
+|| arXiv 2601.16478 — DeepEra (evidence reranking) | search-protocol Evidence Ranking |
+|| arXiv 2605.19196 — REFLECT benchmark (LLM-as-Judge unreliable) | search-protocol Evidence Ranking |
+|| arXiv 2605.01664 — Hybrid retrieval + reranking + grounding | search-protocol Evidence Ranking |
+|| arXiv 2606.04990 — Evidence tracing and provenance | search-protocol Evidence Ranking, execution-provenance |
+|| arXiv 2508.08742 — SSLI formal definition | search-protocol Evidence Ranking |
+|| OWASP LLM01:2025 — Prompt Injection | search-protocol Instruction Contamination Guard |
+|| arXiv 2505.06120 — Multi-turn reliability collapse (Laban et al.) | context-hygiene, tool-use-discipline (consolidation, recap, failure policy) |
+|| arXiv 2503.13657 — MAST failure taxonomy (UC Berkeley) | Failure Mode 6, Failure Mode 8 |
+|| BFCL-V4 / llm-stats.com 2026 — Frontier function-calling plateaus | Failure Mode 8 |
+|| arXiv 2505.03275 — RAG-MCP / Tool-RAG | Skill Exposure Protocol (historical reference) |
+|| arXiv 2602.17046 — ITR (Instruction-Tool Retrieval) | Skill Exposure Protocol (historical reference) |
 
 ---
 

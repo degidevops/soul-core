@@ -28,6 +28,15 @@ here should ever be loaded into a live agent's prompt context.
 | Backbone | v7.4-orchestrator-literature-backed |
 | Version | v7.3 (Orchestrator Specific) |
 
+### V7.5 (Added — June 2026)
+
+- **Hybrid Architecture:** Extracted all procedural protocols from inline template content into 12 standalone skills under `skills/` directory. Each skill follows proper Hermes SKILL.md format (frontmatter + When to Use → Procedure → Pitfalls → Verification).
+- **Flat Skill Structure:** Removed `worker/`, `shared/`, `orchestrator/` subdirectories — all 12 skills now live flat under `skills/`. Trigger condition in SOUL.md determines when each skill is used, not folder ownership.
+- **Mandatory Skill Triggers:** Orchestrator (V7.5) template now includes `## Mandatory Skill Triggers` section with explicit `skill_view(name="...")` calls.
+- **Template Compression:** Orchestrator: 615→241 lines (-61%). All protocol detail moved to skills.
+- **Git Remote:** Changed from `degidevops/soul-management` to `degidevops/soul-core`.
+- **Skill Name:** `soul-management` → `soul-core` (in SKILL.md frontmatter).
+
 ### V7.4 (June 2026 Sync)
 - **Context Hygiene:** Distillation triggers aligned with worker template (proactive trigger at >20% context usage, mandatory reset/re-injection at >30% context usage).
 - **Full Markdown Refactor:** Converted all templates from XML-style structures to standard, lightweight, and clean Markdown formatting (using semantic headings, lists, and tables), reducing prompt overhead and improving token efficiency. Removed all root tags and XML structures.
@@ -86,7 +95,7 @@ Multi-agent coordination is highly prone to **coordination collapse, cascading f
 
 ---
 
-### 4.3 Step 2 — Control Plane Management (VMAO & HERA Loops)
+### 4.3 Control Plane Management (skill: `control-plane-management`)
 
 Step 2 models the Orchestrator as a continuous loop: **Dispatch → Monitor → Intervene → Verify → Replan**.
 
@@ -96,7 +105,7 @@ Step 2 models the Orchestrator as a continuous loop: **Dispatch → Monitor → 
 
 ---
 
-### 4.4 Step 3 — Task Decomposition (Tuple Concretization)
+### 4.4 Task Decomposition (skill: `task-decomposition`)
 
 Decomposition is modeled around **AOrchestra's Unified Agent Tuple Abstraction (arXiv:2602.03786)**:
 
@@ -112,7 +121,7 @@ By structuring every task as a fresh, concretized tuple, the system achieves hig
 
 ---
 
-### 4.5 Step 5 — Tool Exclusion (Anti-Temptation)
+### 4.5 Tool Use Protocol — Orchestrator-Scoped (skill: `tool-use-discipline`)
 
 Orchestration and execution require different toolsets and cognitive modes.
 *   **The Anti-Temptation Boundary**: Enforces strict tool authorization. The orchestrator is authorized to list, create, show, and unblock tasks but is **explicitly forbidden** from completing them (`kanban_complete`), blocking them (`kanban_block`), or running low-level workspace scripts (`terminal`, `write_file`, `patch`).
@@ -120,7 +129,7 @@ Orchestration and execution require different toolsets and cognitive modes.
 
 ---
 
-### 4.6 Step 8 — Structured Provenance & A2A Tracing (V7.4 Sync)
+### 4.6 Context Hygiene (skill: `context-hygiene`)
 
 *   **A2A Tracing (Adimulam et al., arXiv:2601.13671)**: Enterprise-scale observability requires all agent-to-agent interactions to emit structured trace events (JSONL format). This is mapped to Kanban task history (task creation, linking, commenting, and block state transitions), enabling complete deterministic replays of multi-agent execution paths.
 *   **Process-level Accountability (arXiv:2606.04990)**: Structured execution provenance replaces self-reported LLM confidence with verifiable, audit-ready claims traced directly to SQLite database changes and raw file system outputs.
@@ -132,14 +141,14 @@ Orchestration and execution require different toolsets and cognitive modes.
 
 | Paper Citation | Applied To (Template Step / Block) | Core Scientific Insight |
 |---|---|---|
-| **VMAO**, Zhang et al. 2026 (arXiv:2603.11445) | Step 2 Control Plane, Step 3 Decomposition | Verification-driven replanning loop increases execution completeness from 3.1 to 4.2. |
-| **AOrchestra**, Ruan et al. 2026 (arXiv:2602.03786) | Step 3 Decomposition (Tuple Concretization) | Compositional tuple $A = (I,C,T,M)$ structures specialized demand-driven execution. |
-| **HERA**, Li & Ramakrishnan 2026 (arXiv:2604.00901) | Step 2 Adaptive Topology, Step 3 Decomposition | Query-specific agent networks evolve compact, high-utility topologies under sparse exploration. |
-| **Orchestral AI**, Roman 2026 (arXiv:2601.02577) | Mode 10 Context Pollution | Isolation and sandboxing between orchestrator and worker contexts is essential. |
-| **Adimulam et al.** 2026 (arXiv:2601.13671) | Mode 12 Observability, Step 10 A2A Protocol | Enterprise multi-agent tracking requires a standardized Agent2Agent communications schema. |
-| **Dennis et al.** 2026 (arXiv:2604.27891) | Mode 8 direct worker tasks | Decoupling routing/decomposition from low-level execution paths is non-negotiable for stability. |
-| **Shah et al.** 2026 (arXiv:2603.06847) | Mode 6 Multi-Agent Collapse, Step 8 cascading faults | Multi-agent pipelines exhibit complex compound failures; isolated repairs fail; structural resets required. |
-| **NousResearch issues** #20842, #26730, #28554, #35096 | Mode 10, Mode 12, Step 2 state transitions | High-scale, real-world deployment bugs in Hermes Agent; context compression resets and liveness reclaims. |
+| **VMAO**, Zhang et al. 2026 (arXiv:2603.11445) | control-plane-management, task-decomposition | Verification-driven replanning loop increases execution completeness from 3.1 to 4.2. |
+|| **AOrchestra**, Ruan et al. 2026 (arXiv:2602.03786) | task-decomposition (Tuple Concretization) | Compositional tuple $A = (I,C,T,M)$ structures specialized demand-driven execution. |
+|| **HERA**, Li & Ramakrishnan 2026 (arXiv:2604.00901) | control-plane-management (Adaptive Topology), task-decomposition | Query-specific agent networks evolve compact, high-utility topologies under sparse exploration. |
+|| **Orchestral AI**, Roman 2026 (arXiv:2601.02577) | failure-mode-detection (Context Pollution) | Isolation and sandboxing between orchestrator and worker contexts is essential. |
+|| **Adimulam et al.** 2026 (arXiv:2601.13671) | execution-provenance (A2A Protocol), failure-mode-detection (Observability) | Enterprise multi-agent tracking requires a standardized Agent2Agent communications schema. |
+|| **Dennis et al.** 2026 (arXiv:2604.27891) | failure-mode-detection (direct worker tasks) | Decoupling routing/decomposition from low-level execution paths is non-negotiable for stability. |
+|| **Shah et al.** 2026 (arXiv:2603.06847) | failure-mode-detection (Multi-Agent Collapse, cascading faults) | Multi-agent pipelines exhibit complex compound failures; isolated repairs fail; structural resets required. |
+|| **NousResearch issues** #20842, #26730, #28554, #35096 | failure-mode-detection (Context Pollution, Observability, state transitions) | High-scale, real-world deployment bugs in Hermes Agent; context compression resets and liveness reclaims. |
 
 ---
 

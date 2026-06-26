@@ -1,5 +1,5 @@
 ---
-name: soul-management
+name: soul-core
 description: "Manage worker (V7.5) and orchestrator (V7.5) SOUL.md templates with hybrid architecture. All protocols live as flat skills; SOUL.md carries identity + mandatory skill triggers."
 version: 7.5.0
 author: Maru (soul-gen project)

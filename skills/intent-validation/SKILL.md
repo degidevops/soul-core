@@ -1,6 +1,6 @@
 ---
 name: intent-validation
-description: "Load before executing any task with unclear scope, ambiguous input, or intent precision < 70%. Defines Socratic validation, clarification loops, and intent contracts."
+description: "Use when task scope is unclear. Defines clarification loops."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

@@ -1,6 +1,6 @@
 ---
 name: control-plane-management
-description: "Load before any orchestration decision involving task state or worker coordination. Defines Kanban state protocol, block response, zombie detection, and dispatcher coordination."
+description: "Use before orchestration. Defines Kanban protocols."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

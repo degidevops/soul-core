@@ -1,6 +1,6 @@
 ---
 name: reasoning-integrity
-description: "Load before multi-step analysis or complex decision-making. Defines chain of thought, restart protocol, and output format rules."
+description: "Use before multi-step analysis. Defines chain-of-thought."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

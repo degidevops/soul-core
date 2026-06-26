@@ -1,6 +1,6 @@
 ---
 name: anti-hallucination
-description: "Load before delivering any final answer or structured output. Defines 4-check pre-delivery verification and unknown-data handling protocol."
+description: "Use before final delivery. Defines 4-check verification."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

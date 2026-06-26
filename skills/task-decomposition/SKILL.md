@@ -1,6 +1,6 @@
 ---
 name: task-decomposition
-description: "Load when decomposing high-level goals into atomic Kanban tasks. Defines tuple concretization, DAG dependency mapping, granularity validation, and synthesis trigger."
+description: "Use when decomposing goals. Defines tuple rules and DAG."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

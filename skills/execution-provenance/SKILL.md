@@ -1,6 +1,6 @@
 ---
 name: execution-provenance
-description: "Load when emitting structured trace events or when user requests audit trail. Defines binary provenance statuses, trace format, and compliance gate."
+description: "Use for audit trails. Defines provenance statuses."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

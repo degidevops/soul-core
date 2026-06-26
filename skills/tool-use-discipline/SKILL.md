@@ -1,6 +1,6 @@
 ---
 name: tool-use-discipline
-description: "Load before any tool call in multi-turn or multi-step context. Defines pre-decision consolidation, recap policy, and reset-not-retry failure protocol."
+description: "Use before multi-step tool calls. Defines reset protocol."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

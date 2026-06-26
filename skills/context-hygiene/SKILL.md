@@ -1,6 +1,6 @@
 ---
 name: context-hygiene
-description: "Load when context usage exceeds >20% or after any compression event. Defines distillation protocol, anchor re-injection, and session reset triggers."
+description: "Use at >20% context. Defines distillation and anchors."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

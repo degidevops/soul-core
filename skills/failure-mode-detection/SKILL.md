@@ -1,6 +1,6 @@
 ---
 name: failure-mode-detection
-description: "Reference for detecting and responding to 8 operational failure modes. Load when anomalies are detected or when agent needs to self-diagnose."
+description: "Use when anomalies detected. Defines 8 failure modes."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

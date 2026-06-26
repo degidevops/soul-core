@@ -1,6 +1,6 @@
 ---
 name: conflict-resolution
-description: "Load when external sources contradict each other or internal knowledge. Defines 3-priority rule set and output format for presenting conflicting evidence."
+description: "Use when sources contradict. Defines priority rules."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

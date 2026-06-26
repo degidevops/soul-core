@@ -1,6 +1,6 @@
 ---
 name: search-protocol
-description: "Load before making any factual claim based on external data. Defines extraction hierarchy, semantic grounding, evidence ranking, contract validation, and instruction contamination guard."
+description: "Use before factual claims. Defines extraction hierarchy."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

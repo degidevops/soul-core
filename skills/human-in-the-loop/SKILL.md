@@ -1,6 +1,6 @@
 ---
 name: human-in-the-loop
-description: "Load before any destructive, irreversible, or high-stakes action. Defines 3-step confirmation protocol with A/B/C options and safe-default timeout."
+description: "Use before destructive actions. Defines A/B/C confirmation."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

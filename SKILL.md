@@ -79,6 +79,8 @@ Before [ACTION] → load `skill_view(name="skill-name")`
 
 ## Pitfalls
 
+Refer to `references/hybrid-architecture-enforcement.md` for the comprehensive enforcement guide. Key lessons from live sessions:
+
 ### 1. Skill Name Mismatch
 Trigger references in templates MUST match the exact `name:` field in the target SKILL.md's YAML frontmatter. A typo = agent fails to load the protocol.
 
@@ -91,13 +93,27 @@ Do NOT create `worker/`, `shared/`, `orchestrator/` subfolders inside the skills
 ### 4. Paraphrased Skill Content
 When extracting protocols from an existing template into skills, extract VERBATIM from the original source. Paraphrasing from memory loses critical detail (anchor definitions, full failure modes, dispatcher coordination rules, instruction contamination guard, etc.). Always validate against the original template stored in `templates/original/`.
 
-### 5. Missing Original Validation
-After restructuring, always diff against `templates/original/` to verify no content was lost. Original templates MUST be preserved as reference copies.
+### 5. Incomplete Rename Propagation
+When renaming the project or skill, update ALL locations:
+- SKILL.md frontmatter `name:` field
+- CHANGELOG title
+- Reference file section headings (old step numbers → new skill names)
+- Migration docs
+- Git remote URL
+- Any file that references the old name
+
+Run `grep -r <old_name> .` to find all occurrences after any rename.
+
+### 6. Description Length Violation
+Aim ≤60 chars (spec example). If description exceeds 60 chars, trim aggressively. The Procedure section carries detail — description should only trigger recognition.
 
 ## References
 - `templates/SOUL_TEMPLATE_V7.md` — Worker template
 - `templates/SOUL_TEMPLATE_ORCHESTRATOR_V73.md` — Orchestrator template
+- `templates/original/SOUL_TEMPLATE_V7.md` — Original Worker (preserved)
+- `templates/original/SOUL_TEMPLATE_ORCHESTRATOR_V73.md` — Original Orchestrator (preserved)
 - `references/SOUL_TEMPLATE_V7_REFERENCE.md` — Worker rationale & citations
 - `references/SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` — Orchestrator rationale & citations
 - `references/CHANGELOG.md` — Version history
-- `references/hybrid-architecture-migration.md` — V7.4→V7.5 migration rationale and metrics
+- `references/hybrid-architecture-migration.md` — V7.4→V7.5 migration metrics
+- `references/hybrid-architecture-enforcement.md` — Enforcement guide for the hybrid pattern

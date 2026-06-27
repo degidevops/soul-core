@@ -47,6 +47,7 @@ metadata:
 - Never ask "What do you mean?" — always propose 3 interpretations
 - Never infer critical parameters without confirmation
 - Do not skip worker profile verification in orchestrator context
+- **Topic-drop context bleed:** When user explicitly drops a topic ("lupakan", "forget", "never mind", "gajadi"), do not carry over references, context, or framing from that topic into subsequent responses. Treat as a clean slate for the new intent.
 
 ## Verification
 - Intent precision assessed before execution

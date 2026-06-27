@@ -1,7 +1,7 @@
 ---
 name: soul-core
-description: "Manage worker (V7.5) and orchestrator (V7.5) SOUL.md templates with hybrid architecture. All protocols live as flat skills; SOUL.md carries identity + mandatory skill triggers."
-version: 7.5.0
+description: "Manage worker (V7.6) and orchestrator (V7.6) SOUL.md templates with hybrid architecture. All protocols live as flat skills; SOUL.md carries identity + mandatory pre-action checks."
+version: 7.6.0
 author: Maru (soul-gen project)
 license: MIT
 platforms: [linux, macos, windows]
@@ -14,63 +14,96 @@ metadata:
 
 # SOUL & Agentic Engineering Management
 
-This skill manages SOUL.md template profiles for Hermes Agent using a **hybrid architecture**: SOUL.md carries identity + mandatory skill triggers, while detailed protocols are loaded via `skill_view` when triggered.
+This skill manages SOUL.md template profiles for Hermes Agent using a **hybrid architecture**: SOUL.md carries identity + mandatory pre-action checks, while detailed protocols are loaded via `skill_view` when triggered.
 
 ## Architecture: Hybrid (Inline Identity + Flat Skills)
 
 | Layer | Content | Location |
 |-------|---------|----------|
-| **SOUL.md** | Identity, scope, guardrails, mandatory skill triggers, escalation anchors | System prompt (always loaded) |
+| **SOUL.md** | Identity, scope, guardrails, mandatory pre-action checks, escalation anchors | System prompt (always loaded) |
 | **Skills** (flat) | 12 procedural protocols — each in `skills/<name>/SKILL.md` | Loaded via `skill_view(name="...")` on trigger |
 
 **Rationale for flat structure:** A skill is a skill. `search-protocol` is equally relevant to workers and orchestrators. Category subfolders (`worker/`, `shared/`, `orchestrator/`) add no value — the trigger condition in SOUL.md determines when each skill is needed, not who "owns" it.
 
-## Mandatory Skill Triggers in Template
+## Mandatory Pre-Action Checks in Template
 
-Every SOUL.md template MUST include a `## Mandatory Skill Triggers` section with explicit `skill_view(name="...")` calls:
+Every SOUL.md template MUST include a `## Mandatory Pre-Action Checks` section with numbered imperative sequence:
 
 ```
-Before [ACTION] → load `skill_view(name="skill-name")`
+1. [Condition] → `skill_view(name="skill-name")` FIRST
+2. [Condition] → `skill_view(name="skill-name")` FIRST
+...
+N. **Pre-delivery gate:** BEFORE delivering final answer → `skill_view(name="anti-hallucination")` FIRST
 ```
 
 ## Skill Inventory (12 skills, flat)
 
-| Skill | Trigger Condition | Profile |
-|-------|-------------------|---------|
-| `intent-validation` | Before task with unclear scope or intent < 70% | Both |
-| `search-protocol` | Before any factual claim from external data | Both |
-| `conflict-resolution` | When external sources contradict or conflict | Both |
-| `tool-use-discipline` | Before tool call in multi-turn or multi-step context | Both |
-| `reasoning-integrity` | Before multi-step analysis or chain of thought | Both |
-| `anti-hallucination` | Before delivering ANY final answer | Both |
-| `context-hygiene` | When context >20% or after compression | Both |
-| `human-in-the-loop` | Before destructive/irreversible/high-stakes action | Both |
-| `execution-provenance` | When emitting trace events or audit trail | Worker |
-| `failure-mode-detection` | When anomalies or repeated failures detected | Both |
-| `control-plane-management` | Before orchestration decision involving task state | Orchestrator |
-| `task-decomposition` | When decomposing goals into atomic tasks | Orchestrator |
+| Skill | Trigger Condition (Machine-Detectable) | Profile |
+|-------|----------------------------------------|---------|
+| `intent-validation` | User request has ambiguous scope/goal/constraints | Both |
+| `search-protocol` | Response will contain ANY factual claim | Both |
+| `conflict-resolution` | After search returning >1 source, before using results | Both |
+| `tool-use-discipline` | This is SECOND or subsequent tool call in session | Both |
+| `reasoning-integrity` | Conclusion requires combining evidence from >1 source or >1 inference step | Both |
+| `anti-hallucination` | BEFORE delivering ANY final answer to user | Both |
+| `context-hygiene` | Session has ≥5 tool calls OR context usage reported >20% | Both |
+| `human-in-the-loop` | Action involves file deletion, external API write, financial data, profile modification, guardrail change, or irreversible operation | Both |
+| `execution-provenance` | Task involves multi-agent coordination, financial data, or user explicitly requests audit trail | Both |
+| `failure-mode-detection` | After ANY tool returns error, or after 2 consecutive failed attempts of same operation | Both |
+| `control-plane-management` | BEFORE ANY orchestration decision involving task state, worker coordination, or board changes | Orchestrator |
+| `task-decomposition` | When decomposing high-level goals into atomic Kanban tasks | Orchestrator |
 
 ## When to Use
+
 - Creating, deploying, or verifying a Worker or Orchestrator profile
-- Auditing existing SOUL.md for skill coverage
+- Auditing existing SOUL.md for pre-action check coverage
 - Restructuring templates for token efficiency
+- Provisioning new specialist workers from an orchestrator base profile
 
 ## Procedure
 
 ### 1. Template Selection
+
 - **Worker** → `templates/SOUL_TEMPLATE_V7.md`
 - **Orchestrator** → `templates/SOUL_TEMPLATE_ORCHESTRATOR_V73.md`
 
-### 2. Deployment Workflow
+### 2. Worker Provisioning Workflow (Preferred)
+
+Use this when creating new specialist worker profiles from an existing orchestrator or base profile.
+
+1. Create the profile by cloning an existing profile:
+   ```
+   hermes profile create --clone-from <base_profile> <worker_name>
+   ```
+2. **Required correction:** The cloned profile usually inherits the source profile's identity, worker list, and sometimes orchestrator-scoped guidance.
+3. Rewrite the new profile's `SOUL.md` from the worker template (`templates/SOUL_TEMPLATE_V7.md`).
+   - Replace all `{{PLACEHOLDER}}` values with profile-specific content.
+   - Ensure the profile identity fields (`Name`, `Description`, `Role`, `Domain`, `Tone`) match the intended worker.
+   - Ensure the **Worker profiles** list in Section C Resources reflects the actual active workers, not the source profile's list.
+   - Keep only the worker skill triggers in `## Mandatory Pre-Action Checks` (exclude `control-plane-management` and `task-decomposition`).
+4. Validate the deployed `SOUL.md`:
+   - No `{{` or `}}` placeholders remain.
+   - No HTML comments remain.
+   - Every skill has a corresponding trigger in the template.
+   - All skill `name:` values match their `SKILL.md` frontmatter exactly.
+   - Section C has concrete content.
+5. Update the orchestrator's `SOUL.md` to list the new worker in the **Worker profiles** resource block.
+
+**Important:** `hermes profile create --clone-from ...` is a bootstrap step, not a final worker deployment. The SOUL.md rewrite is required.
+
+### 3. Legacy Deployment Workflow (No Clone)
+
+If creating a profile without cloning:
 
 1. Read template in full.
 2. Read relevant `skills/<name>/SKILL.md` files to understand coverage.
 3. Replace `{{PLACEHOLDER}}` values with profile-specific content.
-4. Include ALL mandatory skill triggers in the template.
+4. Include ALL mandatory pre-action checks in the template.
 5. Deploy via `write_file` to `~/.hermes/profiles/<name>/SOUL.md` or `~/.hermes/SOUL.md`.
 6. Post-deployment validation.
 
 ## Verification
+
 1. No `{{` or `}}` placeholders remain.
 2. No HTML comments remain.
 3. Every skill has a corresponding trigger in the template.
@@ -113,28 +146,46 @@ After a successful migration, you MUST update memory with the new architecture s
 ### 8. Section B Extraction Pattern
 When extracting Section B (reasoning protocol) from a monolithic SOUL.md into flat skills:
 1. Keep in SOUL.md: Section A (identity, scope, failure modes, tools, input triggers) + Section B header (knowledge priority only) + Section C (system context)
-2. Replace Section B body (Steps 0-8 inline protocol) with `## Mandatory Skill Triggers` table
-3. **Worker template**: 10 skills only (exclude `task-decomposition` and `control-plane-management`)
-4. **Orchestrator template**: 12 skills (include `task-decomposition` and `control-plane-management`)
+2. Replace Section B body (Steps 0-8 inline protocol) with `## Mandatory Pre-Action Checks` table
+3. **Worker template**: 10 checks only (exclude orchestration-specific checks)
+4. **Orchestrator template**: 12 checks (include orchestration-specific checks)
 5. Workers MUST NOT act as orchestrator — no self-directed decomposition, no kanban interaction
 6. Section B retains ONLY the knowledge priority list (4 lines) — nothing else
 7. Verify: `#### Step 0` should NOT appear in SOUL.md post-migration
 
 ### 9. Over-Extract Pitfall Notes — Template Authority > Agent Inference
-**Pattern**: When extracting pitfall notes from a live session, agents tend to over-generalize edge cases into universal rules ("workers may need orchestrator skills for self-directed tasks"). This happens because the agent reasons from a single observation rather than the architectural principle.
+**Pattern:** When extracting pitfall notes from a live session, agents tend to over-generalize edge cases into universal rules ("workers may need orchestrator skills for self-directed tasks"). This happens because the agent reasons from a single observation rather than the architectural principle.
 
-**Rule**: The template definition (SOUL_TEMPLATE_V7.md, SOUL_TEMPLATE_ORCHESTRATOR_V73.md) is the **source of truth** for profile-skill boundaries. Pitfall notes and migration recipes MUST NOT add skills to a profile that the template excludes. If an edge case seems to warrant a new skill for a worker, escalate to the user rather than silently adding it to the trigger table.
+**Rule:** The template definition (SOUL_TEMPLATE_V7.md, SOUL_TEMPLATE_ORCHESTRATOR_V73.md) is the **source of truth** for profile-skill boundaries. Pitfall notes and migration recipes MUST NOT add skills to a profile that the template excludes. If an edge case seems to warrant a new skill for a worker, escalate to the user rather than silently adding it to the trigger table.
 
-**Test**: After writing a pitfall note or migration step, ask: "Does this contradict the template?" If yes, the template wins — fix the note, not the template.
+**Test:** After writing a pitfall note or migration step, ask: "Does this contradict the template?" If yes, the template wins — fix the note, not the template.
 
-**Real example (2026-06-26)**: Pitfall #8 initially said "Move orchestrator-only skills into trigger table — workers may need them for self-directed decomposition." This was wrong: workers are assigned tasks, they do not decompose or assign. The template V7.5 correctly excludes these. Pitfall #8 was reverted to enforce the boundary.
+**Real example (2026-06-26):** Pitfall #8 initially said "Move orchestrator-only skills into trigger table — workers may need them for self-directed decomposition." This was wrong: workers are assigned tasks, they do not decompose or assign. The template V7.5 correctly excludes these. Pitfall #8 was reverted to enforce the boundary.
 
 ### 10. Strict Literal Compliance With Skill Rules
 The user enforces deterministic execution: if a skill says X, do X exactly. When the user demanded "perbaiki SKILL.md," the correct response was to identify the inconsistency between two sections within the skill (Pitfall #8 vs. Skill Inventory table), reconcile them toward the authoritative source (template), and apply the fix — not to improvise a third interpretation.
 
-**Rule**: When internal documentation contradicts itself, resolve toward the **most authoritative layer** (template > inventory table > pitfall notes > migration recipes > agent inference). Never side with the agent's own reasoning over the documented spec.
+**Rule:** When internal documentation contradicts itself, resolve toward the **most authoritative layer** (template > inventory table > pitfall notes > migration recipes > agent inference). Never side with the agent's own reasoning over the documented spec.
+
+### 11. Passive Trigger Table — Skills Not Loading at Runtime
+**Pattern:** Descriptive trigger tables (V7.5 and earlier) use passive "When X → load Y" format. Agent reads this as a reference — NOT as a mandatory imperative loop. Result: only skills with double-enforcement elsewhere in SOUL.md (e.g., `search-protocol` backed by Section A Tools, `intent-validation` backed by Section C Escalation) are consistently loaded. All others silently ignored.
+
+**Root causes:**
+1. **Execution-first bias:** Default agent behavior prioritizes direct action over gate checks.
+2. **Non-detectable triggers:** Agent cannot measure context percentage, cannot self-classify "multi-turn," cannot detect "destructive" without concrete list.
+3. **Passive format:** Tabel "When → Load" dibaca sebagai dokumentasi, bukan instruksi prosedural.
+4. **No double-enforcement:** 8 dari 10 trigger hanya muncul sekali tanpa backing di Section A/C.
+
+**Fix (V7.6):** Replace passive trigger table with **numbered imperative loop**:
+- `## Mandatory Pre-Action Checks` — numbered sequence (1-10 worker, 1-11 orchestrator)
+- Every check uses concrete, machine-detectable conditions
+- Double-enforced in Section C Constraints: "After 5+ tool calls → context-hygiene", "Before second tool call → tool-use-discipline", "Every final answer → anti-hallucination gate"
+- Communication Protocol includes pre-delivery gate as hard block
+
+**Validation:** After deploying V7.6 template, verify >80% of applicable triggers fire in a test session.
 
 ## References
+
 - `templates/SOUL_TEMPLATE_V7.md` — Worker template
 - `templates/SOUL_TEMPLATE_ORCHESTRATOR_V73.md` — Orchestrator template
 - `templates/original/SOUL_TEMPLATE_V7.md` — Original Worker (preserved)
@@ -145,3 +196,4 @@ The user enforces deterministic execution: if a skill says X, do X exactly. When
 - `references/hybrid-architecture-migration.md` — V7.4→V7.5 migration metrics
 - `references/hybrid-architecture-enforcement.md` — Enforcement guide for the hybrid pattern
 - `references/in-place-migration-recipe.md` — Monolithic→Hybrid migration recipe (exact steps, validation checklist, memory overflow guard)
+- `references/profile-clone-behavior.md` — Observed behavior when provisioning workers through `profile create --clone-from`, and why a post-clone SOUL.md rewrite is required for correct worker identity, triggers, and worker-list references

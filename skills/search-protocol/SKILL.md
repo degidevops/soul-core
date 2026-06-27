@@ -92,6 +92,7 @@ All factual claims require external verification. Internal parametric knowledge 
 - NEVER exceed 5–10 docs per source
 - Do not treat general knowledge as exemption
 - Do not silently pick one source when conflict detected
+- When using SearXng backend, always use camofox_evaluate_js after web_search before considering web_extract; skipping to camofox_evaluate_js may yield empty results for JavaScript-dependent sites.
 
 ## Verification
 - Search completed before any factual claim

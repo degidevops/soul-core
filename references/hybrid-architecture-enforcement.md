@@ -2,13 +2,13 @@
 
 ## Pattern Summary
 
-Extract procedural protocols from monolithic SOUL.md templates into standalone skills. SOUL.md retains identity + mandatory triggers; protocol detail lives in `skills/<name>/SKILL.md`.
+Extract procedural protocols from monolithic SOUL.md templates into standalone skills. SOUL.md retains identity + mandatory pre-action checks; protocol detail lives in `skills/<name>/SKILL.md`.
 
 ## Structural Rules
 
 ### SOUL.md (always-loaded layer)
 - Identity, scope, failure modes, tools, hard guardrails, confidence framework, communication protocol
-- `## Mandatory Skill Triggers` section with `skill_view(name="...")` calls
+- `## Mandatory Pre-Action Checks` section with numbered imperative sequence
 
 ### Skills (on-demand layer)
 - One folder per protocol: `skills/<name>/SKILL.md`
@@ -18,9 +18,12 @@ Extract procedural protocols from monolithic SOUL.md templates into standalone s
 
 ### Trigger Format in Template
 ```markdown
-| When | Skill to Load |
-|------|---------------|
-| Before X | `skill_view(name="skill-name")` |
+## Mandatory Pre-Action Checks
+
+1. [Condition] → `skill_view(name="skill-name")` FIRST
+2. [Condition] → `skill_view(name="skill-name")` FIRST
+...
+N. **Pre-delivery gate:** BEFORE delivering final answer → `skill_view(name="anti-hallucination")` FIRST
 ```
 
 ## Common Pitfalls
@@ -71,3 +74,12 @@ When extracting a protocol from template to skill:
 - Source: `templates/original/SOUL_TEMPLATE_ORCHESTRATOR_V73.md` lines 221-535 (Orchestrator Section B: Steps 0-10)
 - Migration date: 2026-06-26
 - Template versions: V7.4 → V7.5
+- Update date: 2026-06-28
+- Template versions: V7.5 → V7.6
+
+## V7.6 Validation Notes
+When deploying V7.6 templates, verify:
+- Every SOUL.md contains `## Mandatory Pre-Action Checks` with numbered sequence
+- Each check uses concrete, detectable conditions (e.g., "second tool call", "≥5 tool calls")
+- Pre-delivery gate (`anti-hallucination`) appears as final check before delivery
+- Section C Constraints double-enforce critical checks: "Before second tool call → tool-use-discipline", "After 5+ tool calls → context-hygiene", "Every final answer → anti-hallucination gate"

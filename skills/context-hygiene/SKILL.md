@@ -15,10 +15,16 @@ metadata:
 # Step 6: Context Hygiene — Distillation & Anchor Re-Injection
 
 ## When to Use
-- Context usage exceeds >20% of total limit
+- Context usage exceeds **>20%** of total limit
 - After any compression/compaction event
 - Consecutive turns without progress
 - Resource anomalies (API call rate spike, context growth rate > threshold)
+
+## Authoritative Source
+For the current trigger definition, also check:
+- `SOUL.md` "Mandatory Skill Triggers" table
+- This skill's own "When to Use" section
+Local config takes precedence over external docs or parametric knowledge.
 
 ## Procedure
 

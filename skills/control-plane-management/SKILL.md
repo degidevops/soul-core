@@ -55,6 +55,15 @@ Evolve orchestration strategy dynamically based on task complexity and worker av
 - **Dispatcher responsibility:** Atomic claim (ready → claimed), spawn assigned worker profiles, detect missing heartbeats (zombie detection), reclaim stale claims, auto-block after failure limit
 - **Key insight:** The orchestrator does NOT directly spawn workers — it creates tasks with assignee profiles and lets the dispatcher handle spawning. Do not attempt to bypass the dispatcher through delegate_task for task execution.
 
+### Loop Termination Rule
+
+- Within a single orchestration pass, do not alternate between `task-decomposition` and `control-plane-management` more than three times without producing a board state change.
+- If no task is created, updated, or unblocked after three cycles, halt the loop and escalate to the user with:
+  - current board snapshot from `kanban_list`
+  - last decomposition or intervention attempted
+  - diagnosed blocker
+- Replan only after explicit user direction or after a worker status change appears on the board.
+
 ### Tenant Isolation
 Scope all operations strictly to HERMES_KANBAN_BOARD. Tenant is a soft namespace for path and memory isolation. Orchestrator MUST NOT create tasks on boards outside its assigned tenant. Cross-tenant coordination requires explicit user authorization.
 
@@ -70,3 +79,5 @@ Scope all operations strictly to HERMES_KANBAN_BOARD. Tenant is a soft namespace
 - Block reasons diagnosed before intervention
 - Board state re-anchored after compression
 - Dispatcher not bypassed for task execution
+- Orchestration loop terminates after three cycles without board state change
+- Termination events include board snapshot and blocker diagnosis

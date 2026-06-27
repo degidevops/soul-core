@@ -48,6 +48,13 @@ JSONL with fields: timestamp, step_id, action_type, input_summary, output_summar
 ### Kanban Trace (Orchestrator)
 All kanban_* tool calls are traceable via task history. For each orchestration operation, log: task_id, action, resulting state, trigger reason.
 
+### Retention & Cleanup Policy
+
+- Trace events are session-scoped operational data, not durable long-term records.
+- After context distillation or session reset, retain only events needed to explain the current active task graph and recent failures.
+- Older events should be summarized, not accumulated verbatim, to avoid trace bloat.
+- If execution-provenance output is referenced in a final delivery, keep only the minimal relevant subset and omit routine tool calls.
+
 ## Pitfalls
 - Never provide final answer on UNVERIFIED claims — compliance gate is absolute
 - Never silently resolve conflicts — present all sides, do not pick one without evidence
@@ -57,3 +64,5 @@ All kanban_* tool calls are traceable via task history. For each orchestration o
 - Every factual claim in final output has VERIFIED status
 - No UNVERIFIED or CONFLICTING claims slip through delivery gate
 - Trace events cover all emission points
+- Trace retention respects session scope and does not accumulate indefinitely
+- Final delivery references only minimal provenance subset

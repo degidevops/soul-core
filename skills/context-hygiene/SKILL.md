@@ -40,6 +40,12 @@ Local config takes precedence over external docs or parametric knowledge.
 
 **Orchestrator-specific signal:** Verified facts from tool output, user-confirmed decisions, active task state from latest kanban_list, critical constraints, current decomposition graph. Preserve kanban task IDs and statuses verbatim.
 
+### Boundary Note
+
+- This skill owns **distillation** and **anchor re-injection** only.
+- State recap and pre-call consolidation belong to `tool-use-discipline`.
+- If `tool-use-discipline` and `context-hygiene` both fire on the same turn, `context-hygiene` wins because >20% context saturation degrades all subsequent reasoning.
+
 ### Anchor Re-Injection — Combating Attention Decay
 
 **Trigger:** MANDATORY: Every time the distillation trigger (>20% context usage) is met, perform forced re-injection of the following anchors:

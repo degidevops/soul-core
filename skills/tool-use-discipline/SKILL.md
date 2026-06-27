@@ -19,6 +19,9 @@ metadata:
 - Before batch operations (>1 tool calls)
 - When recovering from tool execution errors
 
+This skill does **not** own context distillation or anchor re-injection.
+If `context-hygiene` and `tool-use-discipline` both fire, `context-hygiene` takes precedence on the same turn.
+
 ## Procedure
 
 ### Core Rules
@@ -38,6 +41,8 @@ metadata:
 - Trigger: Tool call fails schema validation or returns an error after 1–2 attempts in the same context
 - Action: Distill current context to signal-only (see Step 6), re-synthesise a clean state brief from scratch, then re-attempt from that clean state — do NOT continue in the same context that produced the failure
 
+**Reset ownership:** After a reset, the next turn must re-evaluate `context-hygiene` and `tool-use-discipline` in that order.
+
 ## Pitfalls
 - Do not retry in place after 2 failures — consolidate and reset
 - Do not skip recap between chained tool calls
@@ -47,3 +52,4 @@ metadata:
 - Every tool call has confirmed output before proceeding
 - Failed tool trajectories trigger reset after 2 max attempts
 - Context consolidation issued before every tool call in multi-turn flows
+- Context hygiene precedence respected when both skills trigger on the same turn

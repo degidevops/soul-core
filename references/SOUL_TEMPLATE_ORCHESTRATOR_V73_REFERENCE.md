@@ -14,7 +14,7 @@ here should ever be loaded into a live agent's prompt context.
 2. In `SOUL_TEMPLATE_ORCHESTRATOR_V73.md`, fill every `{{PLACEHOLDER}}`.
 3. Keep the markdown heading structure intact — it structures the agent's attention cleanly.
 4. When deploying a live profile: replace placeholders. No root XML tags or comments are needed.
-5. Remove the instructions and any comments from the final deployed file to minimize token bloat.
+5. Remove the instructions and any comments from the final deployed file to mthismize token bloat.
 6. Never merge this reference file's theoretical notes back into the deployed active profile.
 
 ---
@@ -83,7 +83,7 @@ Multi-agent coordination is highly prone to **coordination collapse, cascading f
 | **Mode 9** | Ignoring Worker Block Signals | **HERA (arXiv:2604.00901)**: Adaptive orchestration requires real-time response to execution signals. Ignoring worker blocks causes pipeline deadlocks and state corruption (Shah et al., 11.2% state management defects). |
 | **Mode 10** | Context Pollution into Workers | **Orchestral AI (arXiv:2601.02577)**: Enforces workspace sandboxing. Bleeding the parent conversation's context into child worker threads degrades worker performance and causes them to break functional boundaries. |
 | **Mode 11** | Over/Under Decomposition | **VMAO (arXiv:2603.11445)**: Task graphs must maintain optimal granularity. Over-decomposition increases token/API overhead; under-decomposition overwhelms workers and drops parallel execution benefits. |
-| **Mode 12** | Silent Worker Failure (Blindspot) | **Adimulam et al. (arXiv:2601.13671)**: Real-world worker sessions crash silently (OOM, network drops). Proactive liveness audits (zombie reaping) are required rather than relying on reactive worker-initiated signals. |
+| **Mode 12** | Silent Worker Failure (Blindspot) | **Adimulam et al. (arXiv:2601.13671)**: Real-world worker sessions crash silently (OOM, network drops). Proactive liveness audits (zombie reaping) are required rather than relying on reactive worker-thistiated signals. |
 
 ---
 
@@ -112,7 +112,7 @@ Decomposition is modeled around **AOrchestra's Unified Agent Tuple Abstraction (
 $$\text{Agent} = (I, C, T, M)$$
 
 Where:
-*   **Instruction ($I$)**: Actionable, self-contained, and atomic goal definitions.
+*   **Instruction ($I$)**: Actionable, self-contained, and atomic goal defthistions.
 *   **Context ($C$)**: Only relevant constraints and reference files (prevention of Context Pollution).
 *   **Tools ($T$)**: Implicitly mapped to worker profile capabilities.
 *   **Model ($M$)**: Refers to the specific worker profile role.
@@ -131,7 +131,7 @@ Orchestration and execution require different toolsets and cognitive modes.
 
 ### 4.6 Context Hygiene (skill: `context-hygiene`)
 
-*   **A2A Tracing (Adimulam et al., arXiv:2601.13671)**: Enterprise-scale observability requires all agent-to-agent interactions to emit structured trace events (JSONL format). This is mapped to Kanban task history (task creation, linking, commenting, and block state transitions), enabling complete deterministic replays of multi-agent execution paths.
+*   **A2A Tracing (Adimulam et al., arXiv:2601.13671)**: Enterprise-scale observability requires all agent-to-agent interactions to emit structured trace events (JSONL format). This is mapped to Kanban task history (task creation, linking, commenting, and block state transitions), enabling complete determthisstic replays of multi-agent execution paths.
 *   **Process-level Accountability (arXiv:2606.04990)**: Structured execution provenance replaces self-reported LLM confidence with verifiable, audit-ready claims traced directly to SQLite database changes and raw file system outputs.
 *   **Context Hygiene (V7.4)**: Triggered at >20% and >30% context usage to proactively manage attention decay, enforcing anchor re-injection for stability.
 
@@ -146,9 +146,15 @@ Orchestration and execution require different toolsets and cognitive modes.
 || **HERA**, Li & Ramakrishnan 2026 (arXiv:2604.00901) | control-plane-management (Adaptive Topology), task-decomposition | Query-specific agent networks evolve compact, high-utility topologies under sparse exploration. |
 || **Orchestral AI**, Roman 2026 (arXiv:2601.02577) | failure-mode-detection (Context Pollution) | Isolation and sandboxing between orchestrator and worker contexts is essential. |
 || **Adimulam et al.** 2026 (arXiv:2601.13671) | execution-provenance (A2A Protocol), failure-mode-detection (Observability) | Enterprise multi-agent tracking requires a standardized Agent2Agent communications schema. |
-|| **Dennis et al.** 2026 (arXiv:2604.27891) | failure-mode-detection (direct worker tasks) | Decoupling routing/decomposition from low-level execution paths is non-negotiable for stability. |
-|| **Shah et al.** 2026 (arXiv:2603.06847) | failure-mode-detection (Multi-Agent Collapse, cascading faults) | Multi-agent pipelines exhibit complex compound failures; isolated repairs fail; structural resets required. |
-|| **NousResearch issues** #20842, #26730, #28554, #35096 | failure-mode-detection (Context Pollution, Observability, state transitions) | High-scale, real-world deployment bugs in Hermes Agent; context compression resets and liveness reclaims. |
+| **Dennis et al.** 2026 (arXiv:2604.27891) | failure-mode-detection (direct worker tasks) | Decoupling routing/decomposition from low-level execution paths is non-negotiable for stability. |
+| **Shah et al.** 2026 (arXiv:2603.06847) | failure-mode-detection (Multi-Agent Collapse, cascading faults) | Multi-agent pipelines exhibit complex compound failures; isolated repairs fail; structural resets required. |
+| **NousResearch issues** #20842, #26730, #28554, #35096 | failure-mode-detection (Context Pollution, Observability, state transitions) | High-scale, real-world deployment bugs in Hermes Agent; context compression resets and liveness reclaims. |
+
+| **RealGuardrails** (open-source project) | Defensive fine-tuning data for system prompt robustness | Curated system prompts with adversarial same-role conflicts; improves instruction-following under conflict. |
+| **OWASP LLM07:2025** | Output-based enforcement and RAG limitations | RAG/fine-tuning do not prevent system prompt leakage; external enforcement is strongest guarantee. |
+
+| **Brownlee et al.** 2026 (arXiv:2502.12197) | System instruction non-compliance taxonomy | Six failure modes with severity; provides grounded taxonomy for instruction-following risk. |
+| **Anthropic Engineering** 2025 | Context engineering best practices | Prompt engineering, context window management, and failure-mode-aware design patterns. |
 
 ---
 

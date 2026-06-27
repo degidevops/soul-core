@@ -63,11 +63,38 @@ metadata:
 
 ### Mode 7 (Semantic Failure)
 **Signs:** Output validates but facts don't match external reality
-**Response:** Cross-reference with external verifier
+**Response:** Block delivery. Re-verify claim against source data before any further output.
 
 ### Mode 8 (Reliability Collapse)
 **Signs:** Repeated tool errors, hallucinated tool outputs
 **Response:** Context consolidation + structural reset. **Do not retry in place.**
+
+### Compact Diagnosis Output
+
+Before applying remediation, emit a short diagnosis block:
+
+```
+failure_mode: <mode_id>
+trigger: <observed symptom>
+root_cause: <assessed cause>
+action: <remediation to apply>
+retry_allowed: <yes|no>
+```
+
+Required actions by mode:
+
+| Mode | Required Action |
+|------|-----------------|
+| 1 | Stop. Require search before any further factual statement. |
+| 2 | Stop. Flag as violation. Convert claim to unverified pending search. |
+| 3 | Stop. Do not silently substitute internal knowledge. Surface required search. |
+| 4 | Initiate clarification loop immediately. Do not proceed on assumption. |
+| 5 | Stop extraction. Retry with `camofox_evaluate_js` or `camofox_get_page_html`. |
+| 6 | Stop delegation. Implement explicit timeout plus ownership reset. |
+| 7 | Block delivery until claim is re-verified against source data. |
+| 8 | Consolidate state and perform structural reset. Do not retry in place. |
+
+If the failure repeats after remediation, escalate as unresolved with the diagnosis block included.
 
 ## Pitfalls
 - Do not retry in place for Mode 8 — consolidate and reset
@@ -78,3 +105,5 @@ metadata:
 - Failure mode correctly identified
 - Appropriate response applied
 - Mode 8 triggers reset (not retry in place)
+- Diagnosis block emitted before remediation
+- Repeated failures are escalated with block included

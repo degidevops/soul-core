@@ -59,3 +59,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Worker deployment workflow: 8 → 9 steps (added compliance check + validation)
 - Orchestrator deployment workflow: 8 → 9 steps (added compliance check + validation)
 - Pitfalls point 2 updated to match new comment handling rule.
+
+## [v7.6.0] — 2026-06-27
+
+### Added
+- **Mandatory Pre-Action Checks numbering reform** in both Worker and Orchestrator templates.
+- Explicit pre-delivery gate and precedence-aware enforcement wording.
+
+### Changed
+- Worker template updated to numbered imperative checks.
+- Orchestrator template updated to numbered imperative checks with orchestrator-specific rules.
+
+### Fixed
+- Version labeling aligned to V7.6 in templates, SKILL.md frontmatter, and enforcement references.

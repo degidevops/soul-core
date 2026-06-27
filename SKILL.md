@@ -9,7 +9,7 @@ metadata:
   hermes:
     category: soul-core
     tags: [soul, templates, profiles, orchestrator, agentic]
-    related_skills: [hermes-agent, triangulation-research]
+    related_skills: ["anti-hallucination", "conflict-resolution", "context-hygiene", "control-plane-management", "execution-provenance", "failure-mode-detection", "human-in-the-loop", "intent-validation", "memory-lifecycle", "model-routing", "reasoning-integrity", "rollback-revert", "search-protocol", "skill-orchestration", "task-decomposition", "tool-use-discipline"]
 ---
 
 # SOUL & Agentic Engineering Management
@@ -52,6 +52,36 @@ N. **Pre-delivery gate:** BEFORE delivering final answer → `skill_view(name="a
 | `failure-mode-detection` | After ANY tool returns error, or after 2 consecutive failed attempts of same operation | Both |
 | `control-plane-management` | BEFORE ANY orchestration decision involving task state, worker coordination, or board changes | Orchestrator |
 | `task-decomposition` | When decomposing high-level goals into atomic Kanban tasks | Orchestrator |
+
+### Meta Skills (Governance)
+
+These skills govern how other skills interact or manage lifecycle. They do not independently trigger on user intent; they resolve precedence, memory rules, rollback, model routing, and multi-skill composition.
+
+| Skill | Role |
+|-------|------|
+| `skill-orchestration` | Determine precedence and termination when multiple mandatory skills fire |
+| `memory-lifecycle` | Govern what is read/written/deleted from persistent memory |
+| `rollback-revert` | Define safe undo flow for destructive or high-stakes actions |
+| `model-routing` | Select, validate, and switch models/providers with evidence |
+
+### New Skill Integration Procedure
+
+When adding a new skill to the stack:
+
+1. Create the skill file under `skills/<name>/SKILL.md`.
+2. If the skill is worker-relevant, add it to the worker template resource list where appropriate.
+3. If the skill is orchestrator-relevant, add it to the orchestrator template resource list.
+4. If the skill resolves a precedence or composition issue, reference it from `skill-orchestration`.
+5. Do **not** hardcode skill names in template body outside placeholders unless they are mandatory meta-skills.
+6. Update this inventory table to include the new skill.
+
+### Orchestrator Template: Worker Profile Sync
+
+The orchestrator template includes a worker profile sync block. Ensure this block is preserved during template updates:
+
+- Resolve `{{AVAILABLE_WORKER_PROFILES}}` from the active profile registry.
+- Do not hardcode worker names outside template placeholders.
+- If a referenced worker is missing, stop assignment and escalate to the user.
 
 ## When to Use
 

@@ -71,7 +71,7 @@ When extracting a protocol from template to skill:
 ## Reference Trail
 
 - Source: `templates/original/SOUL_TEMPLATE_V7.md` lines 131-327 (Worker Section B: Steps 0-8)
-- Source: `templates/original/SOUL_TEMPLATE_ORCHESTRATOR_V73.md` lines 221-535 (Orchestrator Section B: Steps 0-10)
+- Source: `templates/original/SOUL_TEMPLATE_ORCHESTRATOR_V76.md` lines 221-535 (Orchestrator Section B: Steps 0-10)
 - Migration date: 2026-06-26
 - Template versions: V7.4 → V7.5
 - Update date: 2026-06-28

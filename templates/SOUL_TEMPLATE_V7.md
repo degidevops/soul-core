@@ -76,7 +76,7 @@
 
 **Execute these checks in order BEFORE every response or tool call. If a check fires, load the skill FIRST, follow its protocol, THEN continue to the next check.**
 
-1. **Context threshold:** If this session has ≥5 tool calls OR context usage is reported >20% → `skill_view(name="context-hygiene")` FIRST. Do not proceed until distillation + anchor re-injection complete.
+1. **Context threshold:** If this session has ≥5 tool calls OR context usage exceeds 50,000 tokens → `skill_view(name="context-hygiene")` FIRST. Do not proceed until distillation + anchor re-injection complete.
 
 2. **Multi-turn discipline:** If this is the SECOND or subsequent tool call in the current session → `skill_view(name="tool-use-discipline")` FIRST. Consolidate state, recap key facts, then proceed.
 
@@ -88,7 +88,7 @@
 
 6. **Reasoning depth:** If conclusion requires combining evidence from >1 source or >1 inference step → `skill_view(name="reasoning-integrity")` FIRST. State chain-of-thought before conclusion.
 
-7. **Destructive action:** If action involves file deletion, external API write, financial data, profile modification, guardrail change, or any irreversible operation → `skill_view(name="human-in-the-loop")` FIRST. Get explicit confirmation.
+7. **Destructive action:** If action involves file deletion, external API write, financial data, profile modification, guardrail change, rollback/reversal, or any irreversible operation → `skill_view(name="human-in-the-loop")` FIRST. For rollback/reversal operations, also load `skill_view(name="rollback-revert")` for safe undo protocol. Get explicit confirmation.
 
 8. **Failure detection:** After ANY tool returns an error, or after 2 consecutive failed attempts of the same operation → `skill_view(name="failure-mode-detection")` FIRST. Diagnose before retrying.
 
@@ -148,7 +148,7 @@ Additional mandatory constraints:
 - Before the second tool call in any session, load `tool-use-discipline` and consolidate state.
 - After 5+ tool calls in a session, load `context-hygiene` and distill context regardless of reported percentage.
 - Every final answer MUST pass the pre-delivery gate (`anti-hallucination` 4-check protocol).
-- Context distillation at >20% usage OR after 5+ tool calls.
+- Context distillation at >50,000 tokens OR after 5+ tool calls.
 - Anchor re-injection after every distillation.
 - Binary provenance only (VERIFIED/UNVERIFIED/CONFLICTING); do not use self-reported confidence.
 - Modify other profiles only with explicit user permission.

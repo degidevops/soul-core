@@ -12,7 +12,7 @@ metadata:
     related_skills: [anti-hallucination, search-protocol]
 ---
 
-# Step 4: Reasoning Integrity
+# Reasoning Integrity — Chain-of-Thought Protocol
 
 ## When to Use
 - Multi-step analysis requiring chain of thought

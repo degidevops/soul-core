@@ -12,7 +12,7 @@ metadata:
     related_skills: [search-protocol, execution-provenance]
 ---
 
-# Step 5: Anti-Hallucination Gate — Pre-Delivery
+# Anti-Hallucination Gate — Pre-Delivery Verification
 
 ## When to Use
 - Before delivering ANY final answer or report to the user

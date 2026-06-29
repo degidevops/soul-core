@@ -12,7 +12,7 @@ metadata:
     related_skills: [anti-hallucination, reasoning-integrity]
 ---
 
-# Step 8: Structured Execution Provenance — Deterministic Verification
+# Execution Provenance — Deterministic Verification
 
 ## When to Use
 - When user requests audit trail or trace events
@@ -24,10 +24,11 @@ metadata:
 
 ### Binary Provenance Verification
 - Trace every factual claim to a specific tool output or source passage. Do not use self-reported confidence.
-- Compliance gate: If provenance_status == "UNVERIFIED" or "CONFLICTING", FORBIDDEN to provide a final answer. MUST report research failure.
+- Compliance gate: If provenance_status == "UNVERIFIED" or "CONFLICTING", FORBIDDEN to provide a final answer. MUST report research failure. PARTIAL claims must be flagged as "PARTIAL — limited corroboration" in delivery.
 
 ### Statuses
 - **VERIFIED:** Claim has direct citation to tool output or retrieved source, AND value matches source data (cross-referenced in Semantic Grounding)
+- **PARTIAL:** One source found, limited corroboration, or value partially matches
 - **UNVERIFIED:** No source found, or value cannot be traced to specific passage
 - **CONFLICTING:** Multiple sources disagree — present all sides with citations
 

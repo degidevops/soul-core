@@ -12,7 +12,7 @@ metadata:
     related_skills: [anti-hallucination, context-hygiene]
 ---
 
-# Step 7: Human-in-the-Loop Verification Gate
+# Human-in-the-Loop — A/B/C Confirmation Gate
 
 ## When to Use
 - File deletion or major file restructuring

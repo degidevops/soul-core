@@ -42,8 +42,8 @@ Use `write_file` (NOT patch) — full replacement is safer than patching when re
 | When external sources contradict each other or internal knowledge | `skill_view(name="conflict-resolution")` |
 | Before ANY tool call in multi-turn or multi-step context | `skill_view(name="tool-use-discipline")` |
 | When conclusions require multi-step reasoning or analysis | `skill_view(name="reasoning-integrity")` |
-| Before delivering ANY final answer to the user | `skill_view(name="anti-hallucination")` |
-| When context usage exceeds 20% or after compression | `skill_view(name="context-hygiene")` |
+|| `skill_view(name="context-hygiene")` |
+|| When context usage exceeds >50,000 tokens or after compression | `skill_view(name="context-hygiene")` |
 | Before ANY destructive, irreversible, or high-stakes action | `skill_view(name="human-in-the-loop")` |
 | When emitting structured trace events is required | `skill_view(name="execution-provenance")` |
 | When detecting or responding to operational failures | `skill_view(name="failure-mode-detection")` |

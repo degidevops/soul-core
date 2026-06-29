@@ -48,7 +48,7 @@ operational.
 
 ### V7.4 (Added - June 2026)
 
-- **Dynamic Context Hygiene:** Moved context distillation/anchor injection triggers from message-count (coarse) to %-of-context-limit usage (fine-grained, >20% and >30%).
+- **Dynamic Context Hygiene:** Moved context distillation/anchor injection triggers from message-count (coarse) to absolute token counts (fine-grained, >50,000 tokens proactive and >75,000 tokens mandatory reset).
 - **Full Markdown Refactor:** Converted all templates from XML-style structures to standard, lightweight, and clean Markdown formatting (using semantic headings, lists, and tables), reducing prompt overhead and improving token efficiency. Removed all root tags and XML structures.
 
 ### V7.3 (Added)
@@ -95,7 +95,7 @@ Guidance for whoever fills in `{{PLACEHOLDERS}}` in the template:
 | `{{AUTHORITY_LEVEL}}` | Decision-making boundary. Example: "Execute confirmed tasks, clarify ambiguous intent, proactively identify and mitigate risks." |
 | `{{PROCEED_SIGNAL}}` | A single word the user can say to bypass verification on low-risk items. Must be unique enough not to appear accidentally. Example: "Lanjut" |
 | `{{SYSTEM_POSITION}}` | The agent's position in the system hierarchy. Example: "Sub-agent of orchestrator X. Receives delegated tasks from Hermes." |
-| `{{KEY_CONSTRAINTS}}` | Technical or operational constraints. Example: "SOUL V7.4 protocol. Deterministic verification only. Context distillation at >20% usage. Anchor re-injection at >20% usage. Binary provenance." |
+|| `{{KEY_CONSTRAINTS}}` | Technical or operational constraints. Example: "SOUL V7.6 protocol. Deterministic verification only. Context distillation at >50,000 tokens. Anchor re-injection after every distillation. Binary provenance." |
 | `{{ESCALATION_PROTOCOL}}` | When and to whom the agent must escalate. Example: "Ambiguous intent: clarify with A/B/C options. Unresolvable blockers: report with root cause + alternatives. Security/ethical violations: immediate halt + user notification." |
 | `{{AVAILABLE_RESOURCES}}` | Tools, APIs, or external systems available. Example: "Full tool suite. Persistent memory. External web access. Subagent spawning." |
 | `{{REPORTING_FORMAT}}` | Expected output format. Example: "Conversational Pure Markdown. All factual claims grounded with citations." |
@@ -183,7 +183,7 @@ LLM metacognition degrades as context fills — and models cannot detect this de
 #### Context Distillation
 Enforces separate parsing of noise and signal. Distillation preserves verified facts verbatim while discarding failed attempts, redundant explanations, and conversational filler. This is different from summarization, which collapses or rewrites facts.
 
-**Dynamic Trigger (V7.4 update):** Triggers now operate on `% context usage` (>20% and >30%) rather than message counts. This is far more effective as it accounts for varying token sizes per turn (e.g., long logs vs. short chat), ensuring the agent resets *exactly* when context saturation threatens performance.
+**Dynamic Trigger (V7.6 update):** Triggers now operate on absolute token counts (>50,000 tokens proactive, >75,000 tokens mandatory reset) rather than percentages or message counts. Token counts are concrete and machine-detectable when context reporting is available, and portable across models with different context windows (with proportional adjustment).
 
 #### Anchor Re-Injection
 Re-inserts critical constraints into the high-attention zone at the end of the context window. Attention decay is structural, not behavioral — re-injection is the only reliable mitigation.

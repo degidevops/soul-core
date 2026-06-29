@@ -1,6 +1,6 @@
 ---
 name: context-hygiene
-description: "Use at >20% context. Defines distillation and anchors."
+description: "Use at >50k tokens. Defines distillation and anchors."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT
@@ -12,10 +12,10 @@ metadata:
     related_skills: [tool-use-discipline, execution-provenance]
 ---
 
-# Step 6: Context Hygiene — Distillation & Anchor Re-Injection
+# Context Hygiene — Distillation & Anchor Re-Injection
 
 ## When to Use
-- Context usage exceeds **>20%** of total limit
+- Context usage exceeds **>50,000 tokens** of total context window
 - After any compression/compaction event
 - Consecutive turns without progress
 - Resource anomalies (API call rate spike, context growth rate > threshold)
@@ -30,7 +30,7 @@ Local config takes precedence over external docs or parametric knowledge.
 
 ### Distillation Protocol — Context Distillation (Noise → Signal)
 
-**Trigger:** MANDATORY: When context usage reaches >20% of total limit, perform context distillation immediately.
+**Trigger:** MANDATORY: When context usage reaches >50,000 tokens, perform context distillation immediately.
 
 **Noise:** Failed tool attempts, trial-and-error loops, conversational filler, redundant explanations
 
@@ -44,11 +44,11 @@ Local config takes precedence over external docs or parametric knowledge.
 
 - This skill owns **distillation** and **anchor re-injection** only.
 - State recap and pre-call consolidation belong to `tool-use-discipline`.
-- If `tool-use-discipline` and `context-hygiene` both fire on the same turn, `context-hygiene` wins because >20% context saturation degrades all subsequent reasoning.
+- If `tool-use-discipline` and `context-hygiene` both fire, `context-hygiene` wins because >50k token context saturation degrades all subsequent reasoning.
 
 ### Anchor Re-Injection — Combating Attention Decay
 
-**Trigger:** MANDATORY: Every time the distillation trigger (>20% context usage) is met, perform forced re-injection of the following anchors:
+**Trigger:** MANDATORY: Every time the distillation trigger (>50,000 tokens context usage) is met, perform forced re-injection of the following anchors:
 
 **[Core]:** [MANDATORY: All factual claims MUST be backed by web_search. Internal knowledge is DISABLED for factual use.]
 
@@ -69,8 +69,8 @@ Local config takes precedence over external docs or parametric knowledge.
 **Format:** Inject as structured block immediately before the next user turn or tool call
 
 ### Interventions
-- At >20% context usage: Proactively perform context distillation and suggest a session reset.
-- At >30% context usage: MANDATORY — Perform context distillation + anchor re-injection + reset suggestion; do not continue further without user acknowledgment.
+- At >50,000 tokens context usage: Proactively perform context distillation and suggest a session reset.
+- At >75,000 tokens context usage: MANDATORY — Perform context distillation + anchor re-injection + reset suggestion; do not continue further without user acknowledgment.
 - Delegate complex subtasks to sub-agents to keep main context clean
 - Persist verified facts to memory_tool, not context window
 - At fault propagation signal (repeated tool errors of same class, cascading failures across steps, state drift): mandatory distillation + anchor re-injection + reset + root cause annotation in memory_tool
@@ -90,9 +90,11 @@ Local config takes precedence over external docs or parametric knowledge.
 - Do not skip anchor re-injection after distillation
 - Never persist verified facts in context window only — persist to memory_tool or files
 - Do not ignore fault propagation signals
+- **Threshold calibration:** Context limits vary by model (128k, 200k, 1M). When deploying this skill to a model with a different context window, adjust thresholds proportionally. For a 128k model, >50k tokens ≈ 39% — aggressive but safe. For a 1M model, consider raising the primary threshold to 200k and mandatory reset to 300k. Always verify the actual context limit from model docs, never assume.
+- **Threshold synchronization:** When changing a token threshold in this skill, you MUST also update: (1) both SOUL templates (`SOUL_TEMPLATE_V7.md` and `SOUL_TEMPLATE_ORCHESTRATOR_V76.md`), (2) the `soul-core/SKILL.md` umbrella Skill Inventory table, (3) `references/threshold-calibration-pattern.md`. Failing to sync causes the agent to receive conflicting trigger values depending on which file it reads first.
 
 ## Verification
-- Separation completed before further reasoning after >20% trigger
+- Separation completed before further reasoning after >50k token trigger
 - Anchors re-injected as structured block immediately after separation
 - All signal preserved; all noise removed
 - PROCEED_SIGNAL rejected if not from current-session user

@@ -1,7 +1,7 @@
 ---
 name: soul-core
 description: "Manage worker (V7.6) and orchestrator (V7.6) SOUL.md templates with hybrid architecture. All protocols live as flat skills; SOUL.md carries identity + mandatory pre-action checks."
-version: 7.6.0
+version: 7.6.4
 author: Maru (soul-gen project)
 license: MIT
 platforms: [linux, macos, windows]
@@ -9,7 +9,7 @@ metadata:
   hermes:
     category: soul-core
     tags: [soul, templates, profiles, orchestrator, agentic]
-    related_skills: ["anti-hallucination", "conflict-resolution", "context-hygiene", "control-plane-management", "execution-provenance", "failure-mode-detection", "human-in-the-loop", "intent-validation", "memory-lifecycle", "model-routing", "reasoning-integrity", "rollback-revert", "search-protocol", "skill-orchestration", "task-decomposition", "tool-use-discipline"]
+    related_skills: ["anti-hallucination", "conflict-resolution", "context-hygiene", "control-plane-management", "execution-provenance", "failure-mode-detection", "human-in-the-loop", "intent-validation", "memory-lifecycle", "reasoning-integrity", "rollback-revert", "search-protocol", "skill-orchestration", "task-decomposition", "tool-use-discipline"]
 ---
 
 # SOUL & Agentic Engineering Management
@@ -36,7 +36,9 @@ Every SOUL.md template MUST include a `## Mandatory Pre-Action Checks` section w
 N. **Pre-delivery gate:** BEFORE delivering final answer → `skill_view(name="anti-hallucination")` FIRST
 ```
 
-## Skill Inventory (12 skills, flat)
+## Skill Inventory (16 skills, flat)
+
+### Procedural Skills (12)
 
 | Skill | Trigger Condition (Machine-Detectable) | Profile |
 |-------|----------------------------------------|---------|
@@ -46,8 +48,9 @@ N. **Pre-delivery gate:** BEFORE delivering final answer → `skill_view(name="a
 | `tool-use-discipline` | This is SECOND or subsequent tool call in session | Both |
 | `reasoning-integrity` | Conclusion requires combining evidence from >1 source or >1 inference step | Both |
 | `anti-hallucination` | BEFORE delivering ANY final answer to user | Both |
-| `context-hygiene` | Session has ≥5 tool calls OR context usage reported >20% | Both |
-| `human-in-the-loop` | Action involves file deletion, external API write, financial data, profile modification, guardrail change, or irreversible operation | Both |
+| `context-hygiene` | Session has ≥5 tool calls OR context usage exceeds 50,000 tokens | Both |
+| `human-in-the-loop` | Action involves file deletion, external API write, financial data, profile modification, guardrail change, rollback/reversal, or irreversible operation | Both |
+| `rollback-revert` | Before reversal of destructive or high-stakes action; triggered as sub-check of human-in-the-loop | Both |
 | `execution-provenance` | Task involves multi-agent coordination, financial data, or user explicitly requests audit trail | Both |
 | `failure-mode-detection` | After ANY tool returns error, or after 2 consecutive failed attempts of same operation | Both |
 | `control-plane-management` | BEFORE ANY orchestration decision involving task state, worker coordination, or board changes | Orchestrator |
@@ -55,14 +58,12 @@ N. **Pre-delivery gate:** BEFORE delivering final answer → `skill_view(name="a
 
 ### Meta Skills (Governance)
 
-These skills govern how other skills interact or manage lifecycle. They do not independently trigger on user intent; they resolve precedence, memory rules, rollback, model routing, and multi-skill composition.
+These skills govern how other skills interact or manage lifecycle. They do not independently trigger on user intent; they resolve precedence, memory rules, rollback, and multi-skill composition.
 
 | Skill | Role |
 |-------|------|
 | `skill-orchestration` | Determine precedence and termination when multiple mandatory skills fire |
 | `memory-lifecycle` | Govern what is read/written/deleted from persistent memory |
-| `rollback-revert` | Define safe undo flow for destructive or high-stakes actions |
-| `model-routing` | Select, validate, and switch models/providers with evidence |
 
 ### New Skill Integration Procedure
 
@@ -95,7 +96,7 @@ The orchestrator template includes a worker profile sync block. Ensure this bloc
 ### 1. Template Selection
 
 - **Worker** → `templates/SOUL_TEMPLATE_V7.md`
-- **Orchestrator** → `templates/SOUL_TEMPLATE_ORCHESTRATOR_V73.md`
+- **Orchestrator** → `templates/SOUL_TEMPLATE_ORCHESTRATOR_V76.md`
 
 ### 2. Worker Provisioning Workflow (Preferred)
 
@@ -186,7 +187,7 @@ When extracting Section B (reasoning protocol) from a monolithic SOUL.md into fl
 ### 9. Over-Extract Pitfall Notes — Template Authority > Agent Inference
 **Pattern:** When extracting pitfall notes from a live session, agents tend to over-generalize edge cases into universal rules ("workers may need orchestrator skills for self-directed tasks"). This happens because the agent reasons from a single observation rather than the architectural principle.
 
-**Rule:** The template definition (SOUL_TEMPLATE_V7.md, SOUL_TEMPLATE_ORCHESTRATOR_V73.md) is the **source of truth** for profile-skill boundaries. Pitfall notes and migration recipes MUST NOT add skills to a profile that the template excludes. If an edge case seems to warrant a new skill for a worker, escalate to the user rather than silently adding it to the trigger table.
+** definition (SOUL_TEMPLATE_V7.md, SOUL_TEMPLATE_ORCHESTRATOR_V76.md) is the **source of truth** for profile-skill boundaries. Pitfall notes and migration recipes MUST NOT add skills to a profile that the template excludes. If an edge case seems to warrant a new skill for a worker, escalate to the user rather than silently adding it to the trigger table.
 
 **Test:** After writing a pitfall note or migration step, ask: "Does this contradict the template?" If yes, the template wins — fix the note, not the template.
 
@@ -245,16 +246,41 @@ The user enforces deterministic execution: if a skill says X, do X exactly. When
 
 **Rule:** After updating a skill referenced by templates, grep across all templates for conflicting terminology. Template Communication Protocol is the authoritative voice for output format; skills must align.
 
+### 15. Token-Based Thresholds Over Percentage-Based
+**Pattern:** When defining context distillation triggers, use absolute token counts (e.g., >50,000 tokens) rather than percentages (e.g., >20%).
+
+**Rationale:**
+- Percentages are non-detectable — agents cannot self-measure "20% of context used"
+- Token counts are concrete, machine-detectable when context reporting is available
+- Absolute thresholds are portable across models with different context windows (with proportional adjustment)
+
+**Rule:** Default thresholds: >50k tokens = proactive distillation, >75k tokens = mandatory reset. Adjust proportionally for model context limit. Always state thresholds in tokens, not percentages, in both skills and templates.
+
+### 16. search_files Truncated Results — False Negative for File Existence
+**Pattern:** `search_files` tool caps results at 50 items by default. When auditing a directory with >50 files (e.g., `skills/` containing 16 skill folders each with SKILL.md = 16+ files, plus `.git/` objects), the tool returns only the first 50 and truncates the rest.
+
+**Real example (2026-06-29):** Audit concluded 4 skills were missing because `search_files` only returned 12 skill folders. After re-scan without limit, all 16 were present.
+
+**Rule:** When checking file existence or completeness, always run a SECOND scan with `limit=200` or, or use `find skills/ -name "SKILL.md" | wc -l` to count. Never conclude "file missing" from a single truncated scan.
+
+### 17. "Step N" in Skill Titles — Position Is Determined by Template
+**Pattern:** Skills extracted from monolithic templates often retain "Step N:" in their H1 title (e.g., "# Step 3: Task Decomposition"). This creates confusion when the template's numbered checks assign different positions.
+
+**Rule:** Skill H1 titles MUST NOT contain "Step N:". Position is determined by the template's `## Mandatory Pre-Action Checks` numbering, not the skill's internal title. Use descriptive titles: "# Task Decomposition — Atomic Task Breakdown with Tuple Concretization".
+
+**Verification:** `grep -rn "Step [0-9]:" skills/ --include="*.md"` must return 0 hits after any skill update.
+
 ## References
 
 - `templates/SOUL_TEMPLATE_V7.md` — Worker template
-- `templates/SOUL_TEMPLATE_ORCHESTRATOR_V73.md` — Orchestrator template
-- `templates/original/SOUL_TEMPLATE_V7.md` — Original Worker (preserved)
-- `templates/original/SOUL_TEMPLATE_ORCHESTRATOR_V73.md` — Original Orchestrator (preserved)
+- `templates/SOUL_TEMPLATE_ORCHESTRATOR_V76.md` — Orchestrator template
+- `templates/original/SOUL_TEMPLATE_ORCHESTRATOR_V76.md` — Original Orchestrator (preserved)
 - `references/SOUL_TEMPLATE_V7_REFERENCE.md` — Worker rationale & citations
-- `references/SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` — Orchestrator rationale & citations
+- `references/SOUL_TEMPLATE_ORCHESTRATOR_V73_REFERENCE.md` — Orchestrator rationale & citations (preserved historical name; content covers V7.3-V7.6 evolution)
 - `references/CHANGELOG.md` — Version history
 - `references/hybrid-architecture-migration.md` — V7.4→V7.5 migration metrics
 - `references/hybrid-architecture-enforcement.md` — Enforcement guide for the hybrid pattern
 - `references/in-place-migration-recipe.md` — Monolithic→Hybrid migration recipe (exact steps, validation checklist, memory overflow guard)
 - `references/profile-clone-behavior.md` — Observed behavior when provisioning workers through `profile create --clone-from`, and why a post-clone SOUL.md rewrite is required for correct worker identity, triggers, and worker-list references
+- `references/threshold-calibration-pattern.md` — Token-based context trigger calibration: defaults, model-specific adjustment, migration checklist
+- `references/v764-audit-fix-notes.md` — V7.6.4 full audit: 10 fixes applied, lessons learned, verification checklist

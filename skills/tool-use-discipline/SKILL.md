@@ -39,7 +39,7 @@ If `context-hygiene` and `tool-use-discipline` both fire, `context-hygiene` take
 
 ### Failure Policy — Reset-Not-Retry for Failed Tool Trajectories
 - Trigger: Tool call fails schema validation or returns an error after 1–2 attempts in the same context
-- Action: Distill current context to signal-only (see Step 6), re-synthesise a clean state brief from scratch, then re-attempt from that clean state — do NOT continue in the same context that produced the failure
+- Action: Distill current context to signal-only (see `context-hygiene`), re-synthesise a clean state brief from scratch, then re-attempt from that clean state — do NOT continue in the same context that produced the failure
 
 **Reset ownership:** After a reset, the next turn must re-evaluate `context-hygiene` and `tool-use-discipline` in that order.
 
@@ -47,6 +47,7 @@ If `context-hygiene` and `tool-use-discipline` both fire, `context-hygiene` take
 - Do not retry in place after 2 failures — consolidate and reset
 - Do not skip recap between chained tool calls
 - Never fabricate data when tool returns nothing
+- **No step numbers in skill titles or body.** Position is determined by the template's `## Mandatory Pre-Action Checks` numbering, not internal skill references. Use skill names (e.g., `context-hygiene`) instead of "Step N" when cross-referencing other skills.
 
 ## Verification
 - Every tool call has confirmed output before proceeding

@@ -12,7 +12,7 @@ metadata:
     related_skills: [search-protocol, anti-hallucination]
 ---
 
-# Step 2: Conflict Resolution
+# Conflict Resolution — Source Contradiction Protocol
 
 ## When to Use
 - External content contradicts internal parametric knowledge

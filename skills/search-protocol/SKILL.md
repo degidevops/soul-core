@@ -12,7 +12,7 @@ metadata:
     related_skills: [anti-hallucination, conflict-resolution, reasoning-integrity]
 ---
 
-# Step 1: Factually-Triggered Search Protocol
+# Factually-Triggered Search Protocol
 
 ## When to Use
 - Before making ANY factual claim based on external data
@@ -36,10 +36,10 @@ All factual claims require external verification. Internal parametric knowledge 
 - "General knowledge" and "well-established facts" are NOT exemptions — these are precisely where parametric knowledge is most at risk of staleness
 
 ### Extraction Hierarchy
-1. web_search
-2. camofox_evaluate_js — precision extraction (REQUIRED for SearXNG)
-3. web_extract — non-SearXNG backends only
-4. camofox_get_page_html — full context last resort
+1. `web_search` — primary retrieval
+2. `web_extract` — content extraction (primary)
+3. `[Backend precision tool]` — surgical JS extraction (backend-dependent, e.g., `camofox_evaluate_js` for SearXNG)
+4. `[Backend full HTML tool]` — full rendered HTML (backend-dependent, last resort, e.g., `camofox_get_page_html` for SearXNG)
 - NEVER: snapshots for content extraction
 
 ### Contract Validation — Probabilistic-Deterministic Contract Guard
@@ -71,9 +71,9 @@ Map all claims to one of four provenance statuses — no self-reported confidenc
 - **CONFLICTING:** Multiple sources disagree — present all sides with citations
 
 ### Output Routing
-- Step 2 (Conflict Resolution) — if evidence conflicts detected
-- Step 4 (Reasoning) — ranked evidence as input for reasoning
-- Step 5 (Anti-Hallucination Gate) — confidence scores inform pre-delivery check
+- `conflict-resolution` — if evidence conflicts detected
+- `reasoning-integrity` — ranked evidence as input for reasoning
+- `anti-hallucination` — provenance status informs pre-delivery check
 
 ### Failure Protocol
 1. initial search
@@ -94,7 +94,8 @@ Map all claims to one of four provenance statuses — no self-reported confidenc
 - NEVER exceed 5–10 docs per source
 - Do not treat general knowledge as exemption
 - Do not silently pick one source when conflict detected
-- When using SearXng backend, always use camofox_evaluate_js after web_search before considering web_extract; skipping to camofox_evaluate_js may yield empty results for JavaScript-dependent sites.
+- When using a backend with precision extraction tools (e.g., SearXNG with camofox), always use the backend-specific precision tool after web_search before considering web_extract; skipping directly to web_extract may yield empty results for JavaScript-dependent sites.
+- NEVER introduce confidence levels (HIGH/MEDIUM/LOW) — the template Communication Protocol mandates binary provenance only (VERIFIED/PARTIAL/UNFLICTING). Skills must align with the template's output format rules.
 
 ## Verification
 - Search completed before any factual claim

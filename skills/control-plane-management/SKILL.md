@@ -12,7 +12,7 @@ metadata:
     related_skills: [task-decomposition, failure-mode-detection]
 ---
 
-# Step 2: Control Plane Management — Verification-Driven Coordination Loop
+# Control Plane Management — Verification-Driven Coordination Loop
 
 ## When to Use
 - Before making ANY orchestration decision involving task assignment or state changes

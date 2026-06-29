@@ -38,7 +38,7 @@ here should ever be loaded into a live agent's prompt context.
 - **Skill Name:** `soul-management` → `soul-core` (in SKILL.md frontmatter).
 
 ### V7.4 (June 2026 Sync)
-- **Context Hygiene:** Distillation triggers aligned with worker template (proactive trigger at >20% context usage, mandatory reset/re-injection at >30% context usage).
+- **Context Hygiene:** Distillation triggers aligned with worker template (proactive trigger at >50,000 tokens, mandatory reset/re-injection at >75,000 tokens).
 - **Full Markdown Refactor:** Converted all templates from XML-style structures to standard, lightweight, and clean Markdown formatting (using semantic headings, lists, and tables), reducing prompt overhead and improving token efficiency. Removed all root tags and XML structures.
 
 ### V7.3-ORCH Changelog (June 2026)
@@ -133,7 +133,7 @@ Orchestration and execution require different toolsets and cognitive modes.
 
 *   **A2A Tracing (Adimulam et al., arXiv:2601.13671)**: Enterprise-scale observability requires all agent-to-agent interactions to emit structured trace events (JSONL format). This is mapped to Kanban task history (task creation, linking, commenting, and block state transitions), enabling complete determthisstic replays of multi-agent execution paths.
 *   **Process-level Accountability (arXiv:2606.04990)**: Structured execution provenance replaces self-reported LLM confidence with verifiable, audit-ready claims traced directly to SQLite database changes and raw file system outputs.
-*   **Context Hygiene (V7.4)**: Triggered at >20% and >30% context usage to proactively manage attention decay, enforcing anchor re-injection for stability.
+* **Context Hygiene (V7.6)**: Triggered at >50,000 tokens (proactive) and >75,000 tokens (mandatory reset) to proactively manage attention decay, enforcing anchor re-injection for stability.
 
 ---
 

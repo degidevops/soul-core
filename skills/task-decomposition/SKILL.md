@@ -12,7 +12,7 @@ metadata:
     related_skills: [control-plane-management, failure-mode-detection]
 ---
 
-# Step 3: Task Decomposition — Atomic Task Breakdown with Tuple Concretization
+# Task Decomposition — Atomic Task Breakdown with Tuple Concretization
 
 ## When to Use
 - When decomposing high-level goals into atomic Kanban tasks for worker assignment

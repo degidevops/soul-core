@@ -94,7 +94,7 @@
 
 9. **Provenance:** If task involves multi-agent coordination, financial data, or user explicitly requests audit trail → `skill_view(name="execution-provenance")` FIRST.
 
-10. **Pre-delivery gate:** BEFORE delivering ANY final answer to the user → `skill_view(name="anti-hallucination")` FIRST. Run 4-check protocol. Gate failure → return to search, do not deliver.
+10. **Pre-delivery gate:** BEFORE delivering ANY final answer to the user → `skill_view(name="anti-hallucination")` FIRST. Run 5-check protocol. Gate failure → return to search, do not deliver.
 
 **Critical Rule:** These checks form a mandatory decision sequence. If ANY check fires, load the skill and follow its protocol before continuing to the next check. Do NOT improvise versions of these protocols from memory. Do NOT skip to delivery without passing the pre-delivery gate (check #10).
 

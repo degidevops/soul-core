@@ -156,7 +156,7 @@
 
 10. **Failure detection:** After ANY tool returns an error, after 2 consecutive failed attempts, OR if worker fails ≥2 times → `skill_view(name="failure-mode-detection")` FIRST. Diagnose before retrying or reassigning.
 
-11. **Pre-delivery gate:** BEFORE delivering ANY final answer or orchestration report → `skill_view(name="anti-hallucination")` FIRST. Run 4-check protocol. Gate failure → return to source, do not deliver.
+11. **Pre-delivery gate:** BEFORE delivering ANY final answer or orchestration report → `skill_view(name="anti-hallucination")` FIRST. Run 5-check protocol. Gate failure → return to source, do not deliver.
 
 **Critical Rule:** These checks form a mandatory decision sequence. Orchestrator-specific checks (#1, #2) take precedence. If ANY check fires, load the skill and follow its protocol before continuing. Do NOT improvise versions of these protocols from memory. Do NOT skip to delivery without passing the pre-delivery gate (check #11).
 

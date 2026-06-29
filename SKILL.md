@@ -21,7 +21,7 @@ This skill manages SOUL.md template profiles for Hermes Agent using a **hybrid a
 | Layer | Content | Location |
 |-------|---------|----------|
 | **SOUL.md** | Identity, scope, guardrails, mandatory pre-action checks, escalation anchors | System prompt (always loaded) |
-| **Skills** (flat) | 12 procedural protocols — each in `skills/<name>/SKILL.md` | Loaded via `skill_view(name="...")` on trigger |
+| **Skills** (flat) | 14 procedural protocols — each in `skills/<name>/SKILL.md` | Loaded via `skill_view(name="...")` on trigger |
 
 **Rationale for flat structure:** A skill is a skill. `search-protocol` is equally relevant to workers and orchestrators. Category subfolders (`worker/`, `shared/`, `orchestrator/`) add no value — the trigger condition in SOUL.md determines when each skill is needed, not who "owns" it.
 
@@ -38,7 +38,7 @@ N. **Pre-delivery gate:** BEFORE delivering final answer → `skill_view(name="a
 
 ## Skill Inventory (16 skills, flat)
 
-### Procedural Skills (12)
+### Procedural Skills (14)
 
 | Skill | Trigger Condition (Machine-Detectable) | Profile |
 |-------|----------------------------------------|---------|
@@ -53,6 +53,7 @@ N. **Pre-delivery gate:** BEFORE delivering final answer → `skill_view(name="a
 | `rollback-revert` | Before reversal of destructive or high-stakes action; triggered as sub-check of human-in-the-loop | Both |
 | `execution-provenance` | Task involves multi-agent coordination, financial data, or user explicitly requests audit trail | Both |
 | `failure-mode-detection` | After ANY tool returns error, or after 2 consecutive failed attempts of same operation | Both |
+| `model-routing` | Before assigning or changing a model/provider for an agent, profile, cron job, or task | Both |
 | `control-plane-management` | BEFORE ANY orchestration decision involving task state, worker coordination, or board changes | Orchestrator |
 | `task-decomposition` | When decomposing high-level goals into atomic Kanban tasks | Orchestrator |
 

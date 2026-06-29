@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0/0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v7.6.5] — 2026-06-30
+
+### Fixed
+- **SKILL.md inventory:** Added missing `model-routing` to procedural skills table. Updated count from "12 procedural" to "14 procedural" to match actual skill set (includes `model-routing` and `rollback-revert` which were unlisted).
+- **Template pre-delivery checks:** Fixed remaining "4-check" references in `## Mandatory Pre-Action Checks` numbered list (both Worker check #10 and Orchestrator check #11) → now "5-check".
+
 ## [v7.6.4] — 2026-06-30
 
 ### Added

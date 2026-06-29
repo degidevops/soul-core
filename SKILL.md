@@ -270,6 +270,38 @@ The user enforces deterministic execution: if a skill says X, do X exactly. When
 
 **Verification:** `grep -rn "Step [0-9]:" skills/ --include="*.md"` must return 0 hits after any skill update.
 
+### 18. Improvised Protocol When skill_view Fails
+**Pattern:** When `skill_view(name="...")` returns empty or error, the agent may attempt to "reconstruct" the protocol from internal knowledge. This produces confident but ungrounded execution — indistinguishable from hallucination.
+
+**Rule:** If `skill_view` fails or returns no content:
+1. HARD STOP — do NOT improvise the protocol.
+2. Emit the standard failure report:
+   ```
+   [CRITICAL] Mandatory skill {{SKILL_NAME}} failed to load.
+   Deterministic execution is impossible.
+   All operations halted to prevent improvised protocol failure.
+   Root cause: {{ERROR_MESSAGE}}
+   Action required: Verify skill exists at skills/{{SKILL_NAME}}/SKILL.md and retry.
+   ```
+3. User must fix the underlying skill availability before retry.
+
+**Real example (2026-06-30):** User explicitly asked: "Cara mengatasi agent tidak melakukan improvised protocol jika skill_view gagal." This led to Mode 9 (Skill Load Failure) in `failure-mode-detection`, Check #5 (Protocol Provenance) in `anti-hallucination`, and Hard Guardrail #4 in both templates.
+
+**Enforcement:** Three-layer defense:
+- Layer 1: Hard Guardrail #4 in templates (prevents execution)
+- Layer 2: Mode 9 in failure-mode-detection (diagnoses + hard stop)
+- Layer 3: Check #5 in anti-hallucination (pre-delivery gate blocks delivery)
+
+### 19. Local Repo Discovery — Check Filesystem Before Web Search
+**Pattern:** When the user references a repo by name (e.g., "soul-core", "soul-engine"), the agent may immediately search GitHub/web assuming it's a remote-only resource. But the user may have a local clone at a known path (e.g., `/home/degi/project/soul-core`).
+
+**Rule:** When the user references a repo name:
+1. FIRST check common local paths: `~/project/<name>`, `~/<name>`, `~/repos/<name>`, or ask user for the path.
+2. Only search web/GitHub if local discovery fails or user explicitly asks for remote.
+3. If web search returns 404 or no results for `owner/repo`, ask user for the path — don't conclude "repo doesn't exist."
+
+**Real example (2026-06-30):** User asked to review "degidevops/soul-core". Web search returned no exact match (repo is private/non-existent on GitHub). User then clarified it's cloned at `/home/degi/project/soul-core`. A local-first check would have found it immediately.
+
 ## References
 
 - `templates/SOUL_TEMPLATE_V7.md` — Worker template
@@ -284,3 +316,5 @@ The user enforces deterministic execution: if a skill says X, do X exactly. When
 - `references/profile-clone-behavior.md` — Observed behavior when provisioning workers through `profile create --clone-from`, and why a post-clone SOUL.md rewrite is required for correct worker identity, triggers, and worker-list references
 - `references/threshold-calibration-pattern.md` — Token-based context trigger calibration: defaults, model-specific adjustment, migration checklist
 - `references/v764-audit-fix-notes.md` — V7.6.4 full audit: 10 fixes applied, lessons learned, verification checklist
+- `references/v764-mode9-skill-load-failure.md` — V7.6.4 Mode 9 addition: three-layer defense against improvised protocols
+- `references/repo-structure.md` — Current repo layout, evolution timeline, relationship to other degidevops repos

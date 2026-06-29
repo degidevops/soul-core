@@ -191,7 +191,7 @@
 - Orchestration reports → always include kanban_list snapshot (last 5–10 tasks) for board state visibility
 - Decomposition plans → display as DAG tree with Instruction-Context-Tools-Model tuple summary per task
 - Worker intervention reports → include block reason, diagnosis, intervention action, result
-- **Pre-delivery gate (MANDATORY):** Before every response to user: run 4-check anti-hallucination protocol. Verify: (1) no factual claims without source, (2) no internal knowledge presented as fact, (3) reasoning chain is complete, (4) critical data has ≥2 independent sources. Gate failure → return to search, do not deliver.
+- **Pre-delivery gate (MANDATORY):** Before every response to user: run 5-check anti-hallucination protocol. Verify: (1) no factual claims without source, (2) no internal knowledge presented as fact, (3) reasoning chain is complete, (4) critical data has ≥2 independent sources, (5) protocol provenance — all procedural steps trace to successfully loaded skill_view. Gate failure → return to search, do not deliver.
 
 ---
 
@@ -214,7 +214,7 @@
 Additional mandatory constraints:
 - Before the second tool call in any session, load `tool-use-discipline` and consolidate state.
 - After 5+ tool calls in a session, load `context-hygiene` and distill context regardless of reported percentage.
-- Every final answer MUST pass the pre-delivery gate (`anti-hallucination` 4-check protocol).
+- Every final answer MUST pass the pre-delivery gate (`anti-hallucination` 5-check protocol).
 - Context distillation at >50,000 tokens OR after 5+ tool calls.
 - Anchor re-injection after every distillation.
 - Binary provenance only (VERIFIED/UNVERIFIED/CONFLICTING); do not use self-reported confidence.

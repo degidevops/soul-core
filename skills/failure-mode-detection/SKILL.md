@@ -1,6 +1,6 @@
 ---
 name: failure-mode-detection
-description: "Use when anomalies detected. Defines 8 failure modes."
+description: "Use when anomalies detected. Defines 9 failure modes."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT

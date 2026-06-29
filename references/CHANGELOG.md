@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0/0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v7.6.2] — 2026-06-29
+
+### Fixed
+- **search-protocol:** Replaced confidence scoring (HIGH/MEDIUM/LOW/REJECT) with binary provenance mapping (VERIFIED/PARTIAL/UNVERIFIED/CONFLICTING) to align with template's "binary provenance only" rule.
+- **failure-mode-detection Mode 5:** Replaced hardcoded SearXNG tool references with generic extraction hierarchy (`web_search` → `web_extract` → `camofox_evaluate_js` → `camofox_get_page_html`). Camofox tools now marked as SearXNG-backend-only.
+- **tool-use-discipline:** Removed "Step 3" prefix from title — position is determined by template's numbered checks, not internal skill title.
+
+## [v7.6.1] — 2026-06-29
+
+### Fixed
+- **Orchestrator template deduplication:** Removed 3 duplicate Section A–C blocks (lines 231–558) from `templates/SOUL_TEMPLATE_ORCHESTRATOR_V73.md`. Template reduced from 558 to 230 lines (-59% token waste). Previously the template contained the full Section A → Section C sequence three times, causing attention scatter and conflicting instruction priority.
+
 ## [v7.5.0] — 2026-06-26
 
 ### Added

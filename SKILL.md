@@ -214,6 +214,37 @@ The user enforces deterministic execution: if a skill says X, do X exactly. When
 
 **Validation:** After deploying V7.6 template, verify >80% of applicable triggers fire in a test session.
 
+### 12. PLAN.md Placement — Always in CWD/Project Root
+**Pattern:** When creating a PLAN.md for review/approval, ALWAYS place it in the current working directory (project root), never in arbitrary paths like `~/queue-wiki/maru/` or other research output folders.
+
+**Rule:**
+- CWD atau root folder proyek = satu-satunya lokasi untuk PLAN.md
+- Research output default (`~/queue-wiki/maru/`) hanya untuk riset, bukan untuk working artifact yang sedang di-review
+- Jika cwd = `/home/degi/.local/share/skills/soul-core`, maka PLAN.md = `/home/degi/.local/share/skills/soul-core/PLAN.md`
+
+**Real example (2026-06-29):** Agent membuat PLAN.md di `/home/degi/queue-wiki/maru/PLAN.md` padahal cwd = `/home/degi/.local/share/skills/soul-core`. User explicitly corrected.
+
+### 13. No Execution From Draft Plan
+**Pattern:** NEVER execute fixes from a PLAN.md that is still in draft status, even if the user describes the fixes in detail.
+
+**Rule:**
+- PLAN.md = staging area untuk review
+- User harus explicitly approve sebelum eksekusi
+- Agent boleh mendeskripsikan apa yang akan dilakukan, tapi TIDAK boleh menerapkan perubahan sampai approval datang
+- "Tolong revise" atau "fix ini itu" dari user = minta agent deskripsikan rencana, BUKAN execute langsung
+
+**Real example (2026-06-29):** Agent langsung mengeksekusi Fix #2 (failure-mode-detection Mode 5) padahal PLAN.md masih draft dan belum di-approve. User explicitly corrected.
+
+### 14. Skill vs Template Consistency Audit
+**Pattern:** When updating a flat skill that is referenced from SOUL.md template, always audit the template for consistency with the skill's content.
+
+**Common conflicts:**
+- Skill defines confidence levels (HIGH/MEDIUM/LOW) but template says "binary provenance only"
+- Skill hardcodes specific tool names (camofox_*) but template uses generic (web_search/web_extract)
+- Skill title says "Step N" but template positions it at different check number
+
+**Rule:** After updating a skill referenced by templates, grep across all templates for conflicting terminology. Template Communication Protocol is the authoritative voice for output format; skills must align.
+
 ## References
 
 - `templates/SOUL_TEMPLATE_V7.md` — Worker template

@@ -12,7 +12,7 @@ metadata:
     related_skills: [intent-validation, context-hygiene]
 ---
 
-# Step 3: Tool Use Protocol
+# Tool Use Protocol
 
 ## When to Use
 - Before any tool call in a multi-turn or multi-step context

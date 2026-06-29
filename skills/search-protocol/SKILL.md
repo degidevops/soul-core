@@ -62,11 +62,13 @@ All factual claims require external verification. Internal parametric knowledge 
 - **Logical relevance:** Discard passages that are semantically similar but logically irrelevant (SSLI) to the query.
 - **Conflict detection:** If sources conflict, present all sides with citations. Do not silently pick one.
 
-### Confidence Scoring
-- **HIGH:** Multiple authoritative sources corroborate + recent + logically relevant
-- **MEDIUM:** One authoritative source OR multiple weaker sources agree
-- **LOW:** Single source, outdated, logically weak, or sources conflict
-- **REJECT:** Source is unreliable, logically irrelevant (SSLI), or conflicts with stronger evidence without resolution
+### Provenance Mapping (Binary Only)
+
+Map all claims to one of four provenance statuses — no self-reported confidence levels:
+- **VERIFIED:** Multiple authoritative sources corroborate + recent + logically relevant
+- **PARTIAL:** One authoritative source found, limited corroboration, or value partially matches
+- **UNVERIFIED:** No external sources, or value cannot be traced to specific passage
+- **CONFLICTING:** Multiple sources disagree — present all sides with citations
 
 ### Output Routing
 - Step 2 (Conflict Resolution) — if evidence conflicts detected

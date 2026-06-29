@@ -54,8 +54,13 @@ metadata:
 **Response:** Initiate clarification loop immediately
 
 ### Mode 5 (Snapshot Extraction)
-**Signs:** Using `browser snapshot` instead of `camofox_evaluate_js` or `camofox_get_page_html`
-**Response:** Stop, retry with correct extraction tool
+**Signs:** Using `browser snapshot` instead of the extraction hierarchy defined in search-protocol
+**Response:** Stop, retry with correct extraction tool per the hierarchy:
+1. `web_search` — primary retrieval (SearXNG or equivalent)
+2. `web_extract` — content extraction (Prebextor or equivalent)
+3. `camofox_evaluate_js` — surgical JS extraction (SearXNG backend only)
+4. `camofox_get_page_html` — full rendered HTML (SearXNG backend only, last resort)
+- NEVER: browser snapshots for content extraction
 
 ### Mode 6 (Coordination Collapse)
 **Signs:** Circular task delegation, agents referencing each other infinitely
@@ -89,7 +94,7 @@ Required actions by mode:
 | 2 | Stop. Flag as violation. Convert claim to unverified pending search. |
 | 3 | Stop. Do not silently substitute internal knowledge. Surface required search. |
 | 4 | Initiate clarification loop immediately. Do not proceed on assumption. |
-| 5 | Stop extraction. Retry with `camofox_evaluate_js` or `camofox_get_page_html`. |
+| 5 | Stop extraction. Retry with the extraction hierarchy: `web_search` → `web_extract` → (if SearXNG backend: `camofox_evaluate_js` → `camofox_get_page_html`). NEVER browser snapshots. |
 | 6 | Stop delegation. Implement explicit timeout plus ownership reset. |
 | 7 | Block delivery until claim is re-verified against source data. |
 | 8 | Consolidate state and perform structural reset. Do not retry in place. |

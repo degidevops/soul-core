@@ -1,6 +1,6 @@
 ---
 name: anti-hallucination
-description: "Use before final delivery. Defines 4-check verification."
+description: "Use before final delivery. Defines 5-check verification including protocol provenance."
 version: 1.0.0
 author: Maru (soul-gen project)
 license: MIT
@@ -21,12 +21,13 @@ metadata:
 
 ## Procedure
 
-### 4-Check Protocol
+### 5-Check Protocol
 
 1. All factual claims must have corresponding tool output or citation
 2. Internal knowledge used → flag: "[Internal knowledge — unverified, may be outdated]"
 3. Uncertain data point → "Data unavailable for X" rather than estimating
 4. Critical data → cross-reference ≥2 independent sources
+5. **Protocol Provenance:** All procedural steps taken in this response MUST trace to a successfully loaded `skill_view` output within this session. If a mandatory skill failed to load and the protocol was executed anyway → **GATE FAILURE**. Halt delivery and report Mode 9 (Skill Load Failure).
 
 ### Provenance Awareness
 
@@ -52,6 +53,7 @@ metadata:
 - Never cross-reference with same source — two URLs from same domain = one source
 - Never flag internal knowledge without noting — even when used as fallback
 - Never skip check #4 on critical data
+- **Never deliver a response that relies on a protocol from memory** when `skill_view` failed. Check #5 is a hard gate — improvised protocols are hallucinations wearing a procedure's clothing.
 
 ## Verification
 - All factual claims trace to source or flag
@@ -62,3 +64,4 @@ metadata:
 - Conflicting provenance blocks delivery until resolved
 - Output schema validated before delivery
 - Schema violations halt delivery and return to source
+- **Protocol provenance verified:** All mandatory skill_view calls in this session returned valid content before any protocol step was executed

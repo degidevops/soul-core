@@ -20,7 +20,7 @@ metadata:
 - User reports agent misbehavior
 - As reference during post-mortem analysis
 
-## Reference: 8 Standard Failure Modes
+## Reference: 9 Standard Failure Modes
 
 | # | Title | Behavior | Retry | Severity |
 |---|-------|----------|-------|----------|
@@ -32,6 +32,7 @@ metadata:
 | 6 | Multi-Agent Coordination Collapse | misinterpreted inter-agent messages, groupthink, circular deps, cascading injection | structured_protocol_with_timeouts | high |
 | 7 | Semantic Failure | structured output passes schema but is factually incorrect | external_verifier_required | critical |
 | 8 | Tool-Call Reliability Collapse | failed tool execution as context grows across turns | context_consolidation_then_reset | high |
+| 9 | Skill Load Failure | mandatory skill_view returns empty, error, or no content — agent attempts to improvise the protocol from memory | hard_stop_and_report | critical |
 
 ### Orchestrator-Specific Failure Modes
 
@@ -74,6 +75,18 @@ metadata:
 **Signs:** Repeated tool errors, hallucinated tool outputs
 **Response:** Context consolidation + structural reset. **Do not retry in place.**
 
+### Mode 9 (Skill Load Failure — Improvised Protocol)
+**Signs:** `skill_view(name="...")` returns empty/error, but agent proceeds to "guess" the protocol steps from internal knowledge. Agent says "I will follow the standard procedure..." without having loaded the skill.
+**Response:** HARD STOP. Do NOT improvise. Do NOT guess the protocol. Emit the standard failure report:
+```
+[CRITICAL] Mandatory skill {{SKILL_NAME}} failed to load.
+Deterministic execution is impossible.
+All operations halted to prevent improvised protocol failure.
+Root cause: {{ERROR_MESSAGE}}
+Action required: Verify skill exists at skills/{{SKILL_NAME}}/SKILL.md and retry.
+```
+**Retry allowed:** NO — user must fix the underlying skill availability first.
+
 ### Compact Diagnosis Output
 
 Before applying remediation, emit a short diagnosis block:
@@ -98,6 +111,7 @@ Required actions by mode:
 | 6 | Stop delegation. Implement explicit timeout plus ownership reset. |
 | 7 | Block delivery until claim is re-verified against source data. |
 | 8 | Consolidate state and perform structural reset. Do not retry in place. |
+| 9 | HARD STOP. Do not improvise. Report missing skill and halt all operations until user resolves. |
 
 If the failure repeats after remediation, escalate as unresolved with the diagnosis block included.
 
@@ -105,6 +119,7 @@ If the failure repeats after remediation, escalate as unresolved with the diagno
 - Do not retry in place for Mode 8 — consolidate and reset
 - Do not ignore Mode 4 — guessing leads to cascading failures
 - Do not treat Modes 1-3 as minor — they are critical violations
+- **Mode 9 is a hard stop:** NEVER improvise a protocol from memory when skill_view fails. An improvised protocol is indistinguishable from a hallucination — both produce confident but ungrounded execution.
 
 ## Verification
 - Failure mode correctly identified

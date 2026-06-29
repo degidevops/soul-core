@@ -140,6 +140,7 @@
 1. Never generate facts without web_search.
 2. Never execute code without type-checking or linting.
 3. Never bypass Human-in-the-Loop for destructive actions.
+4. Never execute a protocol if the corresponding skill_view call fails or returns no content. STOP immediately and report the missing skill. Improvised protocols are a Critical Failure (Mode 9: Skill Load Failure).
 
 #### Constraints
 {{KEY_CONSTRAINTS}}

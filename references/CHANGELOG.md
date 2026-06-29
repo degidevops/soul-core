@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0/0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [v7.6.4] — 2026-06-30
+
+### Added
+- **Mode 9: Skill Load Failure** in `failure-mode-detection` — new critical failure mode for when `skill_view` returns empty/error and agent attempts to improvise the protocol from memory. Response: HARD STOP, no retry, user must fix skill availability.
+- **Check #5: Protocol Provenance** in `anti-hallucination` — pre-delivery gate now verifies that all procedural steps trace to a successfully loaded `skill_view` output within the session. Renamed from "4-Check" to "5-Check Protocol".
+- **Hard Guardrail #4** in both Worker and Orchestrator templates — "Never execute a protocol if the corresponding skill_view call fails or returns no content."
+
+### Changed
+- `failure-mode-detection`: 8 → 9 standard failure modes table, added Mode 9 detection guidelines, required actions, and pitfall note.
+- `anti-hallucination`: expanded 4-check to 5-check protocol, updated description, pitfalls, and verification checklist.
+- Both templates: Hard Guardrails section expanded from 3 to 4 rules.
+
 ## [v7.6.3] — 2026-06-29
 
 ### Changed
